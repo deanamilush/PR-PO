@@ -43,7 +43,7 @@ class PrAdapter (private val listUser: ArrayList<UserData>):  RecyclerView.Adapt
     inner class PrViewHolder (private val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(user: UserData) {
             with(binding) {
-                txtName.text = user.name
+                tvItemName.text = user.name
 
                 itemView.setOnClickListener { onItemClickCallback?.onItemClicked(user) }
             }
