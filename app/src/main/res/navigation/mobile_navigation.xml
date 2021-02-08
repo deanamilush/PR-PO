@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_pr">
+
+    <fragment
+        android:id="@+id/navigation_pr"
+        android:name="com.dean.pr_po.ui.pr.PurchaseRequisitionFragment"
+        android:label="@string/title_pr"
+        tools:layout="@layout/fragment_purchaserequisition" />
+
+    <fragment
+        android:id="@+id/navigation_po"
+        android:name="com.dean.pr_po.ui.po.PurchaseOrderFragment"
+        android:label="@string/title_po"
+        tools:layout="@layout/fragment_purchaseorder" />
+</navigation>

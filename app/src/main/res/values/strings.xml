@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">PR-PO</string>
+    <string name="title_pr">Purchase Requisition</string>
+    <string name="title_po">Purchase Order</string>
+    <string name="name">Name</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello Today fragment</string>
+    <string name="tab_text_1">Today Fragment</string>
+    <string name="tab_text_2">One Week Fragment</string>
+
+    <string-array name="data_name">
+        <item>Nadia</item>
+        <item>Jea</item>
+        <item>Indri</item>
+        <item>Ayling</item>
+        <item>Tunai</item>
+    </string-array>
+</resources>
