@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dean.pr_po.DetailActivity
 import com.dean.pr_po.R
 import com.dean.pr_po.databinding.ItemUserBinding
+import kotlinx.android.synthetic.main.item_user.*
 import kotlinx.android.synthetic.main.item_user.view.*
 
 class PrAdapter (private val listUser: ArrayList<UserData>):  RecyclerView.Adapter<PrAdapter.PrViewHolder>(){
@@ -30,6 +31,7 @@ class PrAdapter (private val listUser: ArrayList<UserData>):  RecyclerView.Adapt
     override fun onBindViewHolder(holder: PrViewHolder, position: Int) {
     //    val data = listUser[position]
         holder.bind(listUser[position])
+
        /* holder.itemView.setOnClickListener {
             val dataUser = UserData(
                 data.name

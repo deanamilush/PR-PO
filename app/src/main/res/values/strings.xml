@@ -7,6 +7,12 @@
     <string name="hello_blank_fragment">Hello Today fragment</string>
     <string name="tab_text_1">Today Fragment</string>
     <string name="tab_text_2">One Week Fragment</string>
+    <string name="month_ago">3 Bulan</string>
+    <string name="last_month">Bulan Kemarin</string>
+    <string name="this_month">Bulan Ini</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
 
     <string-array name="data_name">
         <item>Nadia</item>

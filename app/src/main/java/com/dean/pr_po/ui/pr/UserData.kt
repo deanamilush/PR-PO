@@ -6,7 +6,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class UserData (
         var name: String = "",
-        var today: Int = 0,
-        var oneweek: Int = 0,
-        var onemonth: Int = 0
+        var thismonth: Int = 0,
+        var lastmonth: Int = 0,
+        var threemonth: Int = 0
 ) :Parcelable

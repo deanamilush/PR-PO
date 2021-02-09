@@ -12,12 +12,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dean.pr_po.DetailActivity
 import com.dean.pr_po.R
+import com.dean.pr_po.databinding.FragmentPurchaserequisitionBinding
+import com.dean.pr_po.databinding.ItemUserBinding
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_purchaserequisition.*
+import kotlinx.android.synthetic.main.item_user.*
 
 class PurchaseRequisitionFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var binding: FragmentPurchaserequisitionBinding
 
     private val list = ArrayList<UserData>()
     private lateinit var adapter: PrAdapter
@@ -31,17 +35,19 @@ class PurchaseRequisitionFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_purchaserequisition, container, false)
+        val binding = FragmentPurchaserequisitionBinding.inflate(layoutInflater)
+        return (binding.root)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         rvUser.setHasFixedSize(true)
         list.addAll(getListUser())
         showList()
-
     }
+
     fun getListUser(): ArrayList<UserData> {
         val dataName = resources.getStringArray(R.array.data_name)
         val listHero = ArrayList<UserData>()

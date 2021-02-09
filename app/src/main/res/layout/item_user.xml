@@ -7,23 +7,24 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_marginLeft="8dp"
-    android:layout_marginTop="4dp"
+    android:layout_marginTop="6dp"
     android:layout_marginRight="8dp"
-    android:layout_marginBottom="4dp"
+    android:layout_marginBottom="6dp"
     card_view:cardCornerRadius="4dp">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="230dp"
         android:padding="8dp">
         <TextView
             android:id="@+id/tv_item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="18dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            android:textSize="30sp"
+            android:textSize="35sp"
+            android:textColor="@color/black"
             android:layout_toEndOf="@id/img_item_name"
             android:textStyle="bold"
             tools:text="Name" />
@@ -31,7 +32,7 @@
         <ImageView
             android:id="@+id/img_item_name"
             android:layout_width="50dp"
-            android:layout_height="45dp"
+            android:layout_height="50dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginRight="16dp"
@@ -41,52 +42,202 @@
             android:textStyle="bold"
             tools:text="Name" />
 
-        <LinearLayout
-            android:id="@+id/layout_button"
+       <!-- <ImageView
+            android:id="@+id/img_this_month"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="30sp"
+            android:src="@drawable/ic_baseline_format_list_bulleted"
+            android:textStyle="bold"
+            android:layout_below="@id/img_item_name"  />
+
+        <TextView
+            android:id="@+id/tv_this_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:textSize="30sp"
+            android:layout_marginTop="10dp"
+            tools:text="Bulan Ini"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_below="@id/tv_item_name"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginTop="6dp"
-                tools:text="1 Bulan"
-                android:gravity="center"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="8dp"
-                android:textSize="50sp"
-                android:textStyle="bold"
-                tools:text="15"/>
-        </LinearLayout>
+            android:layout_toEndOf="@id/img_this_month"
+            android:textColor="@color/black"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/value_this_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_item_name"
+            android:layout_marginStart="599dp"
+            android:layout_marginLeft="96dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_toEndOf="@id/tv_this_month"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="50sp"
+            android:textStyle="bold"
+            tools:text="15" />-->
+
+        <ImageView
+            android:id="@+id/img_this_month"
+            android:layout_width="50dp"
+            android:layout_height="200dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="30sp"
+            android:src="@drawable/ic_baseline_format_list_bulleted"
+            android:textStyle="bold"
+            android:layout_below="@id/img_item_name"  />
+
+        <TextView
+            android:id="@+id/tv_this_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:textStyle="normal"
+            android:layout_marginTop="6dp"
+            android:text="@string/this_month"
+            android:layout_marginStart="60dp"
+            android:layout_below="@id/tv_item_name"
+            android:layout_toEndOf="@id/img_this_month"
+            android:textColor="@color/black"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/value_this_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="85dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="50sp"
+            android:layout_below="@id/tv_this_month"
+            android:layout_toEndOf="@id/img_this_month"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textStyle="bold"
+            tools:text="15"/>
+
+        <TextView
+            android:id="@+id/tv_last_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:textStyle="normal"
+            android:textColor="@color/black"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="120dp"
+            android:text="@string/last_month"
+            android:layout_below="@id/tv_item_name"
+            android:layout_toEndOf="@id/tv_this_month"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/value_last_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="185dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="50sp"
+            android:layout_below="@id/tv_last_month"
+            android:layout_toEndOf="@id/tv_this_month"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textStyle="bold"
+            tools:text="10"/>
+
+        <TextView
+            android:id="@+id/tv_month_ago"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:textStyle="normal"
+            android:layout_marginStart="120dp"
+            android:layout_marginTop="6dp"
+            android:text="@string/month_ago"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_below="@id/tv_item_name"
+            android:layout_toEndOf="@id/tv_last_month"
+            card_view:drawableStartCompat="@drawable/greater" />
+        <TextView
+            android:id="@+id/value_month_ago"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="175dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="50sp"
+            android:layout_below="@id/tv_month_ago"
+            android:layout_toEndOf="@id/tv_last_month"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textStyle="bold"
+            tools:text="1"/>
+         <!--<LinearLayout
+             android:id="@+id/layout_button"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentBottom="true"
+             android:layout_marginStart="60dp"
+             android:layout_marginTop="6dp"
+             android:layout_below="@id/tv_item_name"
+             android:layout_toEndOf="@id/img_this_month"
+             android:orientation="vertical">
+             <TextView
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:textSize="30sp"
+                 android:textStyle="normal"
+                 android:layout_marginTop="6dp"
+                 tools:text="Bulan Ini"
+                 android:textColor="@color/black"
+                 android:gravity="center"/>
+             <TextView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:layout_marginLeft="16dp"
+                 android:layout_marginTop="16dp"
+                 android:layout_marginRight="16dp"
+                 android:layout_marginBottom="8dp"
+                 android:textSize="50sp"
+                 android:textColor="@color/black"
+                 android:gravity="center"
+                 android:textStyle="bold"
+                 tools:text="15"/>
+         </LinearLayout>
         <LinearLayout
             android:id="@+id/layout_two"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="40dp"
+            android:layout_marginStart="120dp"
             android:layout_toEndOf="@id/layout_button"
             android:layout_below="@id/tv_item_name"
+            android:layout_marginTop="6dp"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/tv_last_month"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
+                android:textSize="30sp"
+                android:textStyle="normal"
+                android:textColor="@color/black"
                 android:layout_marginTop="6dp"
-                tools:text="2 Bulan"
+                tools:text="Bulan Kemarin"
                 android:gravity="center"/>
             <TextView
+                android:id="@+id/value_last_month"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="16dp"
@@ -94,6 +245,8 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="8dp"
                 android:textSize="50sp"
+                android:textColor="@color/black"
+                android:gravity="center"
                 android:textStyle="bold"
                 tools:text="10"/>
         </LinearLayout>
@@ -102,19 +255,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="40dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginTop="6dp"
             android:layout_toEndOf="@id/layout_two"
             android:layout_below="@id/tv_item_name"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/tv_month_ago"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
+                android:textSize="30sp"
+                android:textStyle="normal"
                 android:layout_marginTop="6dp"
-                tools:text="2 Bulan"
-                android:gravity="center"/>
+                tools:text="  3 Bulan"
+                android:textColor="@color/black"
+                android:gravity="center"
+                card_view:drawableStartCompat="@drawable/greater" />
             <TextView
+                android:id="@+id/value_month_ago"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="16dp"
@@ -122,8 +280,10 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="8dp"
                 android:textSize="50sp"
+                android:textColor="@color/black"
+                android:gravity="center"
                 android:textStyle="bold"
                 tools:text="1"/>
-        </LinearLayout>
+        </LinearLayout>-->
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
