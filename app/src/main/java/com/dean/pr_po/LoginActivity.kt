@@ -16,6 +16,7 @@ import com.androidnetworking.error.ANError
 import com.androidnetworking.interfaces.JSONObjectRequestListener
 import com.dean.pr_po.databinding.ActivityLoginBinding
 import com.dean.pr_po.ui.pr.UserData
+import com.google.gson.JsonObject
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.AsyncHttpResponseHandler
 import cz.msebera.android.httpclient.Header
@@ -33,7 +34,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     }
     private lateinit var binding: ActivityLoginBinding
     private var pConfig :Config? = null
-    var arrayList = ArrayList<UserData>()
+    val arrayList = ArrayList<UserData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,31 +48,63 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun getUserLogin(){
         val client = AsyncHttpClient()
-        val url = GlobalConfig.loginUser
-     //   client.addHeader("id_app", "A200706002")
+        val url = "http://192.168.1.8/GlobalInc/loginService.php"
+        val idApp = GlobalConfig.pId_app
+      //  client.addHeader("id_app", idApp)
         client.get(url, object: AsyncHttpResponseHandler(){
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray) {
+            override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
 
-                val result = String(responseBody)
-                Log.d(TAG, result)
+         //       val result = String (responseBody)
+            //    Log.d(TAG, result)
 
                 try {
-                    val responseObject = JSONObject(result)
-                    val item = responseObject.getJSONArray("result")
-                    for (i in 0 until item.length()) {
-                        val jsonObject = item.getJSONObject(i)
-                        val username: String = jsonObject.getString("username")
-                        val password: String = jsonObject.getString("password")
-                        val idApp: String = jsonObject.getString("id_app")
-                        val user = Config()
-                        user.username = username
-                        user.password = password
-                        user.pId_app = idApp
 
-                        binding.tvUsername.text = username
+                    val responseObject = JSONObject()
+                    val returnMessage = responseObject.getJSONArray("return")
+                    val jsonObject = returnMessage.getJSONObject(0)
+                    val messageErrorLogin : String = jsonObject.getString("type")
+                    if (messageErrorLogin.equals("E")){
+                        val builder = AlertDialog.Builder(this@LoginActivity)
+                        builder.setTitle("Error")
+                        builder.setMessage(messageErrorLogin)
+                        builder.setCancelable(false)
+                        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                            dialog.cancel()
+                        }
+                        builder.show()
                     }
 
 
+                    /*for (i in 0 until returnMessage.length()) {
+                        val jsonObject = returnMessage.getJSONObject(i)
+                        val messageErrorLogin : String = jsonObject.getString("msg")
+
+                        if (messageErrorLogin.equals("E")){
+                            val builder = AlertDialog.Builder(this@LoginActivity)
+                            builder.setTitle("Error")
+                            builder.setMessage(messageErrorLogin)
+                            builder.setCancelable(false)
+                            builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                                dialog.cancel()
+                            }
+                            builder.show()
+                        }else{
+                            val responseObjectUser = JSONObject()
+                            val resultMessage = responseObject.getJSONArray("result")
+
+                            for (j in 0 until returnMessage.length()) {
+                                val jsonObjectUser = returnMessage.getJSONObject(j)
+                                val username: String = jsonObjectUser.getString("username")
+                                val password: String = jsonObjectUser.getString("password")
+                                arrayList.add(UserData(username, password))
+                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                startActivity(intent)
+                            }
+
+                        }
+
+
+                    }*/
                 } catch (e: Exception) {
                     Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT)
                             .show()
@@ -92,6 +125,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
         })
     }
+
+
 
     private fun loadAllStudents(){
 
@@ -153,10 +188,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         } else if (password.isEmpty()){
             binding.valuePassword.setError("Tidak Boleh Kosong")
         } else {
-            pConfig?.username = username
-            pConfig?.password = password
+           getUserLogin()
            // binding.progressBar.visibility = View.VISIBLE
-           loadAllStudents()
             /*val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)*/
         }
