@@ -48,15 +48,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         val client = AsyncHttpClient()
         val url = "http://192.168.1.8/GlobalInc/loginService.php"
         val idApp = GlobalConfig.pId_app
-        client.get(url, object: AsyncHttpResponseHandler(){
+        client.post(url, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
 
-         //       val result = String (responseBody)
-            //    Log.d(TAG, result)
-
+                val result = String (responseBody)
+                Log.d(TAG, result)
                 try {
-
-                    val responseObject = JSONObject()
+                    val responseObject = JSONObject(result)
                     val returnMessage = responseObject.getJSONArray("return")
                     val jsonObject = returnMessage.getJSONObject(0)
                     val typeErrorLogin = jsonObject.getString("type")
@@ -70,39 +68,16 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             dialog.cancel()
                         }
                         builder.show()
+                    }else{
+                        val resultMessage = responseObject.getJSONArray("result")
+                        val responseLogin = resultMessage.getJSONObject(0)
+                        val username = responseLogin.getString("username")
+                        val password = responseLogin.getString("password")
+
+                        responseObject.put(username, binding.valueLogin.text.toString())
+                        responseObject.put(password, binding.valuePassword.text.toString())
+
                     }
-
-
-                    /*for (i in 0 until returnMessage.length()) {
-                        val jsonObject = returnMessage.getJSONObject(i)
-                        val messageErrorLogin : String = jsonObject.getString("msg")
-
-                        if (messageErrorLogin.equals("E")){
-                            val builder = AlertDialog.Builder(this@LoginActivity)
-                            builder.setTitle("Error")
-                            builder.setMessage(messageErrorLogin)
-                            builder.setCancelable(false)
-                            builder.setPositiveButton(android.R.string.yes) { dialog, which ->
-                                dialog.cancel()
-                            }
-                            builder.show()
-                        }else{
-                            val responseObjectUser = JSONObject()
-                            val resultMessage = responseObject.getJSONArray("result")
-
-                            for (j in 0 until returnMessage.length()) {
-                                val jsonObjectUser = returnMessage.getJSONObject(j)
-                                val username: String = jsonObjectUser.getString("username")
-                                val password: String = jsonObjectUser.getString("password")
-                                arrayList.add(UserData(username, password))
-                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                                startActivity(intent)
-                            }
-
-                        }
-
-
-                    }*/
                 } catch (e: Exception) {
                     Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT)
                             .show()
@@ -141,4 +116,53 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             startActivity(intent)*/
         }
     }
+
+    /*private fun verifyFromSQLite() {
+
+        if (!inputValidation!!.isInputEditTextFilled(
+                textInputEditTextEmail!!,
+                textInputLayoutEmail!!,
+                getString(R.string.error_message_email))) {
+            return
+        } else if (!inputValidation!!.isInputEditTextFilled(
+                textInputEditTextPassword!!,
+                textInputLayoutPassword!!,
+                getString(R.string.error_message_password))) {
+            return
+        } else {
+            val json = JSONObject()
+            json.put("email", textInputEditTextEmail.text.toString())
+            json.put("password", textInputEditTextPassword.text.toString())
+
+            progressBar.visibility = View.VISIBLE            HttpTask({                progressBar.visibility = View.INVISIBLE                if (it == null) {
+                println("connection error")
+                return@HttpTask                }
+                println(it)
+                val json_res = JSONObject(it)
+                if (json_res.getString("status").equals("true")) {
+                    var userdata = User()
+                    var jsonArray = JSONArray(json_res.getString("data"))
+                    for (i in 0..(jsonArray.length() - 1)) {
+                        val item = jsonArray.getJSONObject(i)
+                        userdata.id = item.getString("id")
+                        userdata.username = item.getString("username")
+                        userdata.email = item.getString("email")
+                    }
+                    emptyInputEditText()
+                    val intent = Intent(activity, HomeActivity::class.java)
+                    intent.putExtra("id", userdata.id)
+                    startActivity(intent)
+                    Log.d("userdata Data:::::::", userdata.toString())
+                } else {
+                    Log.d("psot Data:::::::", json_res.getString("message"))
+                    Snackbar.make(nestedScrollView!!, json_res.getString("message"), Snackbar.LENGTH_LONG).show()
+                }
+
+            }).execute("POST", "http://192.168.1.111/KotlinExample/LoginRegistration/login.php", json.toString())
+        }
+    }
+
+    private fun emptyInputEditText() {
+        textInputEditTextEmail!!.text = null        textInputEditTextPassword!!.text = null    }*/
+
 }
