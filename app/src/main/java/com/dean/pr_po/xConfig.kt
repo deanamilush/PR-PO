@@ -1,12 +1,12 @@
 package com.dean.pr_po
 
-class Config {
+class xConfig {
 
     var pGlobalPath = "/storage/emulated/0/init/"
     var pInitAppl = pGlobalPath + "initappl.txt"
     var pDBName = "dashappdb"
     var pDBApp = "stockopdb"
-    var pId_app = "A200706002" //id_app dari t_app dashboard
+    var pId_app = "A200706002" //id_app dari t_app dashboard A200706002
 
 
     private var baseURL: String? = null

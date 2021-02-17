@@ -7,6 +7,7 @@ class GlobalConfig {
         private val SERVER = "http://192.168.1.8/GlobalInc/"
         val loginUser = SERVER+"loginService.php"
         val pId_app = "A200706002"
-
+        var username = "username"
+        val password = "password"
     }
 }
