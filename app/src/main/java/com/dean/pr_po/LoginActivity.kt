@@ -1,11 +1,13 @@
 package com.dean.pr_po
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.dean.pr_po.GlobalConfig.Companion.pId_app
 import com.dean.pr_po.GlobalConfig.Companion.password
 import com.dean.pr_po.GlobalConfig.Companion.username
 import com.dean.pr_po.databinding.ActivityLoginBinding
@@ -20,8 +22,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
         private val TAG = LoginActivity::class.java.simpleName
-        private val EXTRA_PASSWORD = "password"
-        private val EXTRA_USER = "username"
     }
     private lateinit var binding: ActivityLoginBinding
 
@@ -29,29 +29,35 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.progressBar.visibility = View.INVISIBLE
 
         binding.btnLogin.setOnClickListener(this)
     }
 
     private fun getUserLogin(){
+        binding.progressBar.visibility = View.VISIBLE
+        val loginUser = binding.valueLogin.text.toString()
+        val loginPass = binding.valuePassword.text.toString()
         val client = AsyncHttpClient()
         val params = RequestParams()
         params.put("id_app", GlobalConfig.pId_app)
-        val url = "http://192.168.1.8/GlobalInc/loginService.php"
-        val idApp = GlobalConfig.pId_app
-        client.post(url, object: AsyncHttpResponseHandler(){
+        params.put("username", "admin")
+        params.put("password", "1234")
+        val url = GlobalConfig.urlLogin
+        client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
+                binding.progressBar.visibility = View.INVISIBLE
                 val result = String (responseBody)
                 Log.d(TAG, result)
                 try {
                     val responseObject = JSONObject(result)
                     val returnMessage = responseObject.getJSONArray("return")
-                    val resultMessage = responseObject.getJSONArray("result")
                     for (i in 0 until returnMessage.length()){
                         val jsonObject = returnMessage.getJSONObject(i)
                         val typeErrorLogin = jsonObject.getString("type")
                         val messageErrorLogin = jsonObject.getString("msg")
                         if (typeErrorLogin.equals("E")){
+                            binding.progressBar.visibility = View.INVISIBLE
                             val builder = AlertDialog.Builder(this@LoginActivity)
                             builder.setTitle("Error")
                             builder.setMessage(messageErrorLogin)
@@ -61,15 +67,27 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             }
                             builder.show()
                         } else {
-                            for (j in 0 until resultMessage.length()){
-                                val responseLogin = resultMessage.getJSONObject(j)
-                                val username = responseLogin.getString("username")
-                                val password = responseLogin.getString("password")
-                                val idApp = responseLogin.getString("id_app")
+                            // get username and password from webservice
+                            val resultMessage = responseObject.getJSONArray("result")
+                            val responseLogin = resultMessage.getJSONObject(0)
+                            val username = responseLogin.getString("username")
+                            val password = responseLogin.getString("password")
 
-                                binding.tvUsername.text = username
-                                binding.tvPassword.text = password
-
+                            //validasi username
+                            if (username.equals(loginUser) && password.equals(loginPass)){
+                                binding.progressBar.visibility = View.INVISIBLE
+                                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                                finish()
+                            } else /*if (username != loginUser && password != loginPass)*/{
+                                binding.progressBar.visibility = View.INVISIBLE
+                                val builder = AlertDialog.Builder(this@LoginActivity)
+                                builder.setTitle("Error")
+                                builder.setMessage("Username / Password Salah")
+                                builder.setCancelable(false)
+                                builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                                    dialog.cancel()
+                                }
+                                builder.show()
                             }
                         }
                     }
@@ -81,7 +99,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray, error: Throwable) {
-
+                binding.progressBar.visibility = View.INVISIBLE
                 val errorMessage = when (statusCode) {
                     401 -> "$statusCode : Bad Request"
                     403 -> "$statusCode : Forbidden"

@@ -13,6 +13,7 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="sign_in">Sign In</string>
+    <string name="app_version">App Version</string>
 
     <string-array name="data_name">
         <item>Nadia</item>
