@@ -16,20 +16,44 @@ import com.loopj.android.http.AsyncHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileReader
+import java.io.IOException
 
 class SplashActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySplashBinding
     private val SPLASH_TIME_OUT:Long = 3000
+    lateinit var pConfig: GlobalConfig
 
     companion object {
-        public val TAG = SplashActivity::class.java.simpleName
+        val TAG = SplashActivity::class.java.simpleName
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val fileEvents = File(GlobalConfig.pInitAppl)
+        if(fileEvents.exists())
+            binding.textViewApp.text = pConfig.pVer + "." + pConfig.pDev
+        else{
+            Toast.makeText(this@SplashActivity, "File INITAPPL Tidak ditemukan, Hubungi segera Administrator..!", Toast.LENGTH_SHORT).show()
+        }
+        /*val text = StringBuilder()
+        try {
+            val br = BufferedReader(FileReader(fileEvents))
+            var line: String?
+            while (br.readLine().also { line = it } != null) {
+                text.append(line)
+               // pConfig.setBaseURL(text.toString())
+            }
+            br.close()
+        } catch (e: IOException) {
+        }*/
 
         Handler(Looper.getMainLooper()).postDelayed({
             getVersion()
@@ -73,13 +97,11 @@ class SplashActivity : AppCompatActivity() {
                         } else {
                             val resultMessage = responseObject.getJSONArray("result")
                             val responseLogin = resultMessage.getJSONObject(0)
-                            val appname = responseLogin.getString("appname")
-                            val version = responseLogin.getString("version")
-                            val dev = responseLogin.getString("dev")
+                            pConfig.pAppname = responseLogin.getString("appname")
+                            pConfig.pVer = responseLogin.getString("version")
+                            pConfig.pDev = responseLogin.getString("dev")
 
-                            binding.tvVersion.text = version +"."+ dev
-
-                            if (sVerCode.equals(version) && versionName.equals(dev)){
+                            if (sVerCode.equals(pConfig.pVer) && versionName.equals(pConfig.pDev)){
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                                     finish()

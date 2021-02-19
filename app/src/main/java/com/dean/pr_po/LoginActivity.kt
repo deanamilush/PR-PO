@@ -29,6 +29,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+     //   getSeasonUser()
         binding.progressBar.visibility = View.INVISIBLE
 
         binding.btnLogin.setOnClickListener(this)
@@ -62,7 +64,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             builder.setTitle("Error")
                             builder.setMessage(messageErrorLogin)
                             builder.setCancelable(false)
-                            builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                            builder.setPositiveButton("OK") { dialog, which ->
                                 dialog.cancel()
                             }
                             builder.show()
@@ -82,9 +84,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                                 binding.progressBar.visibility = View.INVISIBLE
                                 val builder = AlertDialog.Builder(this@LoginActivity)
                                 builder.setTitle("Error")
+                                builder.setIcon(R.drawable.warning)
                                 builder.setMessage("Username / Password Salah")
                                 builder.setCancelable(false)
-                                builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                                builder.setPositiveButton("Coba Lagi") { dialog, which ->
                                     dialog.cancel()
                                 }
                                 builder.show()
@@ -106,12 +109,55 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     404 -> "$statusCode : Not Found"
                     else -> "$statusCode : ${error.message}"
                 }
-                Toast.makeText(this@LoginActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                val builder = AlertDialog.Builder(this@LoginActivity)
+                builder.setTitle("Error")
+                builder.setIcon(R.drawable.warning)
+                builder.setMessage(errorMessage)
+                builder.setCancelable(false)
+                builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                    dialog.cancel()
+                }
+                builder.show()
             }
 
         })
     }
 
+    private fun getSeasonUser(){
+        if (AppPreferences.isLogin) {
+            AppPreferences.isLogin = false
+            AppPreferences.username = ""
+            AppPreferences.password = ""
+        } else {
+            val username = binding.valueLogin.text.toString()
+            val password = binding.valuePassword.text.toString()
+            if (username.isNotBlank() && password.isNotBlank()) {
+                AppPreferences.isLogin = true
+                AppPreferences.username = username
+                AppPreferences.password = password
+            } else {
+                Toast.makeText(this, "login validation", Toast.LENGTH_SHORT).show()
+            }
+        }
+        //setupLoginLayout()
+    }
+
+    private fun setupLoginLayout() {
+        if (AppPreferences.isLogin) {
+            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            finish()
+        } else {
+            val builder = AlertDialog.Builder(this@LoginActivity)
+            builder.setTitle("Error")
+            builder.setIcon(R.drawable.warning)
+            builder.setMessage("Login terlebih dahulu")
+            builder.setCancelable(false)
+            builder.setPositiveButton("OK") { dialog, which ->
+                dialog.cancel()
+            }
+            builder.show()
+        }
+    }
 
     override fun onClick(p0: View?) {
 
