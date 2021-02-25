@@ -39,7 +39,7 @@ class SplashActivity : AppCompatActivity() {
 
         val fileEvents = File(GlobalConfig.pInitAppl)
         if(fileEvents.exists())
-            binding.textViewApp.text = pConfig.pVer + "." + pConfig.pDev
+            binding.textViewApp.text = GlobalConfig.pVer + "." + GlobalConfig.pDev
         else{
             Toast.makeText(this@SplashActivity, "File INITAPPL Tidak ditemukan, Hubungi segera Administrator..!", Toast.LENGTH_SHORT).show()
         }
@@ -49,11 +49,18 @@ class SplashActivity : AppCompatActivity() {
             var line: String?
             while (br.readLine().also { line = it } != null) {
                 text.append(line)
-               // pConfig.setBaseURL(text.toString())
+                GlobalConfig.setBaseURL(GlobalConfig(),text.toString())
             }
             br.close()
         } catch (e: IOException) {
+        }
+        if(GlobalConfig.baseURL!= null){
+            pConfig.pIp_webser = pConfig.baseURL
+            binding.textViewApp.text = pConfig.pVer + "." + pConfig.pDev
+        }else{
+            Toast.makeText(this@SplashActivity, "File INITAPPL Tidak ditemukan, Hubungi segera Administrator..!", Toast.LENGTH_SHORT).show()
         }*/
+
 
         Handler(Looper.getMainLooper()).postDelayed({
             getVersion()
@@ -97,11 +104,11 @@ class SplashActivity : AppCompatActivity() {
                         } else {
                             val resultMessage = responseObject.getJSONArray("result")
                             val responseLogin = resultMessage.getJSONObject(0)
-                            pConfig.pAppname = responseLogin.getString("appname")
-                            pConfig.pVer = responseLogin.getString("version")
-                            pConfig.pDev = responseLogin.getString("dev")
+                            GlobalConfig.pAppname = responseLogin.getString("appname")
+                            GlobalConfig.pVer = responseLogin.getString("version")
+                            GlobalConfig.pDev = responseLogin.getString("dev")
 
-                            if (sVerCode.equals(pConfig.pVer) && versionName.equals(pConfig.pDev)){
+                            if (sVerCode.equals(GlobalConfig.pVer) && versionName.equals(GlobalConfig.pDev)){
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                                     finish()
@@ -124,7 +131,6 @@ class SplashActivity : AppCompatActivity() {
                     e.printStackTrace()
                 }
             }
-
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray, error: Throwable) {
                 binding.progressBar.visibility = View.INVISIBLE
                 val errorMessage = when (statusCode) {
