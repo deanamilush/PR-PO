@@ -40,8 +40,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         val client = AsyncHttpClient()
         val params = RequestParams()
         params.put("id_app", GlobalConfig.pId_app)
-        params.put("username", "admin")
-        params.put("password", "1234")
+        params.put("username", GlobalConfig.username)
+        params.put("password", GlobalConfig.password)
         val url = GlobalConfig.urlLogin
         client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
@@ -69,11 +69,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             // get username and password from webservice
                             val resultMessage = responseObject.getJSONArray("result")
                             val responseLogin = resultMessage.getJSONObject(0)
-                            val username = responseLogin.getString("username")
-                            val password = responseLogin.getString("password")
+                            GlobalConfig.username = responseLogin.getString("username")
+                            GlobalConfig.password = responseLogin.getString("password")
 
                             //validasi username
-                            if (username.equals(loginUser) && password.equals(loginPass)){
+                            if (GlobalConfig.username.equals(loginUser) && GlobalConfig.password.equals(loginPass)){
                                 binding.progressBar.visibility = View.INVISIBLE
                                 startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                                 finish()

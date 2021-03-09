@@ -13,6 +13,10 @@ class GlobalConfig {
         var pAppname: String? = null
         var pVer: String? = null
         var pDev: String? = null
+
+        // global variable untuk login
+        var username = "username"
+        var password = "password"
         /*var pVer: String? = null
         var pDev: String? = null*/
 
@@ -47,9 +51,7 @@ class GlobalConfig {
     var pUser_sap: String? = null
     var pPass_sap: String? = null
 
-    // global variable untuk login
-    var username = "username"
-    var password = "password"
+
 
     //global Variabel Aplikasi Stock Opname
     var pDate: String? = null

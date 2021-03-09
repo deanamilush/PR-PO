@@ -37,12 +37,12 @@ class SplashActivity : AppCompatActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val fileEvents = File(GlobalConfig.pInitAppl)
+        /*val fileEvents = File(GlobalConfig.pInitAppl)
         if(fileEvents.exists())
             binding.textViewApp.text = GlobalConfig.pVer + "." + GlobalConfig.pDev
         else{
             Toast.makeText(this@SplashActivity, "File INITAPPL Tidak ditemukan, Hubungi segera Administrator..!", Toast.LENGTH_SHORT).show()
-        }
+        }*/
         /*val text = StringBuilder()
         try {
             val br = BufferedReader(FileReader(fileEvents))
@@ -109,6 +109,7 @@ class SplashActivity : AppCompatActivity() {
                             GlobalConfig.pDev = responseLogin.getString("dev")
 
                             if (sVerCode.equals(GlobalConfig.pVer) && versionName.equals(GlobalConfig.pDev)){
+                                binding.tvVersion.text = GlobalConfig.pVer + "." + GlobalConfig.pDev
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                                     finish()
