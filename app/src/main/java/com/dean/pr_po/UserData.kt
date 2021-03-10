@@ -14,6 +14,14 @@ data class UserData (
         var prThisMonth: Int? = null,
         var prLastMonth: Int? = null,
         var prMonthAgo: Int? = null,
-        var version: Int? = null,
-        var dev: Int? = null
+        var version: String? = null,
+        var dev: String? = null,
+        var pId_user: String? = null,
+        var pPlant: String? = null,
+        var pId_conn: String? = null,
+        var pUser_sap: String? = null,
+        var pPass_sap: String? = null,
+        var pAshost: String? = null,
+        var pSysnr: String? = null,
+        var pClient: String? = null
 ) :Parcelable

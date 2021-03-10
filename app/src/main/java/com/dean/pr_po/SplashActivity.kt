@@ -61,7 +61,6 @@ class SplashActivity : AppCompatActivity() {
             Toast.makeText(this@SplashActivity, "File INITAPPL Tidak ditemukan, Hubungi segera Administrator..!", Toast.LENGTH_SHORT).show()
         }*/
 
-
         Handler(Looper.getMainLooper()).postDelayed({
             getVersion()
         }, SPLASH_TIME_OUT)
@@ -89,6 +88,7 @@ class SplashActivity : AppCompatActivity() {
                     val returnMessage = responseObject.getJSONArray("return")
 
                     for (i in 0 until returnMessage.length()){
+                        val dataUser = UserData()
                         val jsonObject = returnMessage.getJSONObject(i)
                         val typeErrorLogin = jsonObject.getString("type")
                         val messageErrorLogin = jsonObject.getString("msg")
@@ -102,14 +102,15 @@ class SplashActivity : AppCompatActivity() {
                             }
                             builder.show()
                         } else {
+
                             val resultMessage = responseObject.getJSONArray("result")
                             val responseLogin = resultMessage.getJSONObject(0)
-                            GlobalConfig.pAppname = responseLogin.getString("appname")
-                            GlobalConfig.pVer = responseLogin.getString("version")
-                            GlobalConfig.pDev = responseLogin.getString("dev")
+                          //  dataUser = responseLogin.getString("appname")
+                            dataUser.version = responseLogin.getString("version")
+                            dataUser.dev = responseLogin.getString("dev")
 
-                            if (sVerCode.equals(GlobalConfig.pVer) && versionName.equals(GlobalConfig.pDev)){
-                                binding.tvVersion.text = GlobalConfig.pVer + "." + GlobalConfig.pDev
+                            if (sVerCode.equals(dataUser.version) && versionName.equals(dataUser.dev)){
+                                binding.tvVersion.text = dataUser.version + "." + dataUser.dev
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                                     finish()

@@ -59,8 +59,8 @@ class SplashViewModel : ViewModel() {
                             val resultMessage = responseObject.getJSONArray("result")
                             val responseLogin = resultMessage.getJSONObject(0)
                             val appname = responseLogin.getString("appname")
-                            userItems.version = responseLogin.getInt("version")
-                            userItems.dev = responseLogin.getInt("dev")
+                            userItems.version = responseLogin.getString("version")
+                            userItems.dev = responseLogin.getString("dev")
 
                             if (sVerCode.equals(userItems.version) && versionName.equals(userItems.dev)){
                                 val builder = AlertDialog.Builder(context)

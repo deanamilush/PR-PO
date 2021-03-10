@@ -20,43 +20,49 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
         private val TAG = LoginActivity::class.java.simpleName
     }
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var loginBinding: ActivityLoginBinding
+    private val data = UserData()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        loginBinding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(loginBinding.root)
 
      //   getSeasonUser()
-        binding.progressBar.visibility = View.INVISIBLE
+        loginBinding.progressBar.visibility = View.INVISIBLE
 
-        binding.btnLogin.setOnClickListener(this)
+        loginBinding.btnLogin.setOnClickListener(this)
     }
 
     private fun getUserLogin(){
-        binding.progressBar.visibility = View.VISIBLE
-        val loginUser = binding.valueLogin.text.toString()
-        val loginPass = binding.valuePassword.text.toString()
+        loginBinding.progressBar.visibility = View.VISIBLE
+
+        val loginUser = loginBinding.valueLogin.text.toString()
+        val loginPass = loginBinding.valuePassword.text.toString()
+        val pUser = BuildConfig.PARAMS_USERNAME
+        val pPass = BuildConfig.PARAMS_PASSWORD
         val client = AsyncHttpClient()
         val params = RequestParams()
         params.put("id_app", GlobalConfig.pId_app)
-        params.put("username", GlobalConfig.username)
-        params.put("password", GlobalConfig.password)
+        params.put("username", pUser)
+        params.put("password", pPass)
         val url = GlobalConfig.urlLogin
         client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
-                binding.progressBar.visibility = View.INVISIBLE
+                loginBinding.progressBar.visibility = View.INVISIBLE
                 val result = String (responseBody)
                 Log.d(TAG, result)
                 try {
                     val responseObject = JSONObject(result)
                     val returnMessage = responseObject.getJSONArray("return")
                     for (i in 0 until returnMessage.length()){
+                        val pUserData = UserData()
                         val jsonObject = returnMessage.getJSONObject(i)
                         val typeErrorLogin = jsonObject.getString("type")
                         val messageErrorLogin = jsonObject.getString("msg")
                         if (typeErrorLogin.equals("E")){
-                            binding.progressBar.visibility = View.INVISIBLE
+                            loginBinding.progressBar.visibility = View.INVISIBLE
                             val builder = AlertDialog.Builder(this@LoginActivity)
                             builder.setTitle("Error")
                             builder.setMessage(messageErrorLogin)
@@ -69,16 +75,25 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             // get username and password from webservice
                             val resultMessage = responseObject.getJSONArray("result")
                             val responseLogin = resultMessage.getJSONObject(0)
-                            GlobalConfig.username = responseLogin.getString("username")
-                            GlobalConfig.password = responseLogin.getString("password")
-
+                            pUserData.username = responseLogin.getString("username")
+                            pUserData.password = responseLogin.getString("password")
+                            pUserData.pId_user = responseLogin.getString("id_user")
+                            pUserData.pId_conn = responseLogin.getString("id_conn")
+                            pUserData.pPlant = responseLogin.getString("plant")
+                            pUserData.pUser_sap = responseLogin.getString("user_sap")
+                            pUserData.pSysnr = responseLogin.getString("sysnr")
+                            pUserData.pAshost = responseLogin.getString("ashost")
+                            pUserData.pClient = responseLogin.getString("client")
+                            pUserData.pPass_sap = responseLogin.getString("password")
                             //validasi username
-                            if (GlobalConfig.username.equals(loginUser) && GlobalConfig.password.equals(loginPass)){
-                                binding.progressBar.visibility = View.INVISIBLE
-                                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            if (pUserData.username.equals(loginUser) && pUserData.password.equals(loginPass)){
+                                loginBinding.progressBar.visibility = View.INVISIBLE
+                                val gotomain = Intent(this@LoginActivity, MainActivity::class.java)
+                                gotomain.putExtra(MainActivity.pDATA, pUserData)
+                                startActivity(gotomain)
                                 finish()
                             } else /*if (username != loginUser && password != loginPass)*/{
-                                binding.progressBar.visibility = View.INVISIBLE
+                                loginBinding.progressBar.visibility = View.INVISIBLE
                                 val builder = AlertDialog.Builder(this@LoginActivity)
                                 builder.setTitle("Error")
                                 builder.setIcon(R.drawable.warning)
@@ -99,7 +114,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray, error: Throwable) {
-                binding.progressBar.visibility = View.INVISIBLE
+                loginBinding.progressBar.visibility = View.INVISIBLE
                 val errorMessage = when (statusCode) {
                     401 -> "$statusCode : Bad Request"
                     403 -> "$statusCode : Forbidden"
@@ -126,8 +141,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             AppPreferences.username = ""
             AppPreferences.password = ""
         } else {
-            val username = binding.valueLogin.text.toString()
-            val password = binding.valuePassword.text.toString()
+            val username = loginBinding.valueLogin.text.toString()
+            val password = loginBinding.valuePassword.text.toString()
             if (username.isNotBlank() && password.isNotBlank()) {
                 AppPreferences.isLogin = true
                 AppPreferences.username = username
@@ -158,13 +173,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(p0: View?) {
 
-        val username = binding.valueLogin.text.toString()
-        val password = binding.valuePassword.text.toString()
+        var username = loginBinding.valueLogin.text.toString()
+        var password = loginBinding.valuePassword.text.toString()
 
         if (username.isEmpty()){
-            binding.valueLogin.setError("Tidak Boleh Kosong")
+            loginBinding.valueLogin.setError("Tidak Boleh Kosong")
         } else if (password.isEmpty()){
-            binding.valuePassword.setError("Tidak Boleh Kosong")
+            loginBinding.valuePassword.setError("Tidak Boleh Kosong")
         } else  {
             getUserLogin()
         }

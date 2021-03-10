@@ -47,6 +47,12 @@ class ListAdapter (private val listUser: ArrayList<UserData>):  RecyclerView.Ada
         fun bind(user: UserData) {
             with(binding) {
                 tvItemName.text = user.name
+                prThisMonth.text = user.prThisMonth.toString()
+                prLastMonth.text = user.prLastMonth.toString()
+                prMonthAgo.text = user.prMonthAgo.toString()
+                poThisMonth.text = user.poThisMonth.toString()
+                poLastMonth.text = user.poLastMonth.toString()
+                poMonthAgo.text = user.poMonthAgo.toString()
 
                 itemView.setOnClickListener { onItemClickCallback?.onItemClicked(user) }
             }
