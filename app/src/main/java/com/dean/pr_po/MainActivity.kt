@@ -7,7 +7,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.dean.pr_po.databinding.ActivityMainBinding
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.AsyncHttpResponseHandler
@@ -24,106 +26,119 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mainBinding: ActivityMainBinding
     private val list = ArrayList<UserData>()
-    private val listUserAdapter = ListAdapter(list)
+    private val adapter = ListAdapter(list)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainBinding.root)
 
+        mainBinding.recyclerView.setHasFixedSize(true)
+        mainBinding.recyclerView.addItemDecoration(DividerItemDecoration(mainBinding.recyclerView.context, DividerItemDecoration.VERTICAL))
         mainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
-        listUserAdapter.notifyDataSetChanged()
-        mainBinding.recyclerView.adapter = listUserAdapter
-
-
-        val pData = intent.getParcelableExtra<UserData>(pDATA) as UserData
+        mainBinding.recyclerView.adapter = adapter
 
         getListUser()
-        mainBinding.recyclerView.setHasFixedSize(true)
-        //showList()
     }
 
-    fun getListUser() {
+    private fun getListUser(){
+        mainBinding.progressBar.visibility = View.VISIBLE
         val pData = intent.getParcelableExtra<UserData>(pDATA) as UserData
+
         val client = AsyncHttpClient()
-        val url = "http://192.168.1.8/GlobalInc/valPrPO.php"
+        val DEFAULT_TIMEOUT = 40 * 1000
+        client.setTimeout(DEFAULT_TIMEOUT)
         val params = RequestParams()
         params.put("ashost", pData.pAshost)
         params.put("sysnr", pData.pSysnr)
         params.put("client", pData.pClient)
         params.put("usap", pData.pUser_sap)
         params.put("psap", pData.pPass_sap)
-        client.post(url, params, object : AsyncHttpResponseHandler() {
+        val url = "http://192.168.1.8/GlobalInc/valPrPo.php"
+        client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
-                // Jika koneksi berhasil
-                val result = String(responseBody)
+                mainBinding.progressBar.visibility = View.INVISIBLE
+                val result = String (responseBody)
                 Log.d(TAG, result)
                 try {
                     val responseObject = JSONObject(result)
-                    val jsonArray = responseObject.getJSONArray("return")
+                    val returnMessage = responseObject.getJSONArray("return")
                     val tPurc = responseObject.getJSONArray("t_purc")
                     val tPr = responseObject.getJSONArray("t_pr")
                     val tPo = responseObject.getJSONArray("t_po")
-                    val type = jsonArray.getJSONObject(0)
-                    val typeReturn = type.getString("type")
-                    val messageReturn = type.getString("msg")
-                    if (typeReturn.equals("E")) {
-                        val builder = AlertDialog.Builder(this@MainActivity)
-                        builder.setTitle("Error")
-                        builder.setMessage(messageReturn)
-                        builder.setCancelable(false)
-                        builder.setPositiveButton("OK") { dialog, which ->
-                            dialog.cancel()
-                        }
-                        builder.show()
-                    } else{
-                        for (i in 0 until jsonArray.length()){
-                            val user = tPurc.getJSONObject(i)
-                            val userData = UserData()
-                            userData.name = user.getString("BEDNR")
-                            val lBednr = user.getString("BEDNR")
-
-                            for (j in 0 until jsonArray.length()) {
-                                val dataPr = tPr.getJSONObject(j)
-                                if (lBednr.equals(dataPr.getString("BEDNR"))){
-                                    userData.prThisMonth = dataPr.getInt("QCUR_MT")
-                                    userData.prLastMonth = dataPr.getInt("QPREV_MT")
-                                    userData.prMonthAgo = dataPr.getInt("QLAST_MT")
-                                    break
-                                }
+                    for (i in 0 until returnMessage.length()){
+                        val jsonObject = returnMessage.getJSONObject(i)
+                        val typeErrorLogin = jsonObject.getString("type")
+                        val messageErrorLogin = jsonObject.getString("msg")
+                        if (typeErrorLogin.equals("E")){
+                            mainBinding.progressBar.visibility = View.INVISIBLE
+                            val builder = AlertDialog.Builder(this@MainActivity)
+                            builder.setTitle("Error")
+                            builder.setMessage(messageErrorLogin)
+                            builder.setCancelable(false)
+                            builder.setPositiveButton("OK") { dialog, which ->
+                                dialog.cancel()
                             }
-                            for (k in 0 until jsonArray.length()) {
-                                val dataPr = tPr.getJSONObject(k)
-                                if (lBednr.equals(dataPr.getString("BEDNR"))){
-                                    userData.poThisMonth = dataPr.getInt("QCUR_MT")
-                                    userData.poLastMonth = dataPr.getInt("QPREV_MT")
-                                    userData.poMonthAgo = dataPr.getInt("QLAST_MT")
-                                    break
+                            builder.show()
+                        } else {
+                            Toast.makeText(this@MainActivity, "CEK CEK CEK", Toast.LENGTH_SHORT)
+                                    .show()
+                            for (l in 0 until tPurc.length()){
+                                val user = tPurc.getJSONObject(l)
+                                val userData = UserData()
+                                userData.name = user.getString("BEDNR")
+                                val lBednr = user.getString("BEDNR")
+
+                                for (j in 0 until tPr.length()) {
+                                    val dataPr = tPr.getJSONObject(j)
+                                    if (lBednr.equals(dataPr.getString("BEDNR"))){
+                                        userData.prThisMonth = dataPr.getInt("QCUR_MT")
+                                        userData.prLastMonth = dataPr.getInt("QPREV_MT")
+                                        userData.prMonthAgo = dataPr.getInt("QLAST_MT")
+                                        break
+                                    }
                                 }
+                                for (k in 0 until tPo.length()) {
+                                    val dataPo = tPo.getJSONObject(k)
+                                    if (lBednr.equals(dataPo.getString("BEDNR"))){
+                                        userData.poThisMonth = dataPo.getInt("QCUR_MT")
+                                        userData.poLastMonth = dataPo.getInt("QPREV_MT")
+                                        userData.poMonthAgo = dataPo.getInt("QLAST_MT")
+                                        break
+                                    }
+                                }
+
+                                list.add(userData)
+                                adapter.notifyDataSetChanged()
                             }
-
-                            list.add(userData)
-                            listUserAdapter.notifyDataSetChanged()
                         }
-
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_SHORT)
+                            .show()
                     e.printStackTrace()
                 }
-
             }
 
-            override fun onFailure(statusCode: Int, headers: Array<Header>, responseBody: ByteArray, error: Throwable) {
-                // Jika koneksi gagal
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray, error: Throwable) {
+                mainBinding.progressBar.visibility = View.INVISIBLE
                 val errorMessage = when (statusCode) {
                     401 -> "$statusCode : Bad Request"
                     403 -> "$statusCode : Forbidden"
                     404 -> "$statusCode : Not Found"
                     else -> "$statusCode : ${error.message}"
                 }
-                Toast.makeText(this@MainActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                val builder = AlertDialog.Builder(this@MainActivity)
+                builder.setTitle("Error")
+                builder.setIcon(R.drawable.warning)
+                builder.setMessage(errorMessage)
+                builder.setCancelable(false)
+                builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                    dialog.cancel()
+                }
+                builder.show()
             }
+
         })
     }
 
@@ -134,7 +149,7 @@ class MainActivity : AppCompatActivity() {
 
         listUserAdapter.setOnItemClickCallback(object : ListAdapter.OnItemClickCallback{
             override fun onItemClicked(data: UserData) {
-                showSelected(data)
+                //showSelected(data)
             }
         })
     }
