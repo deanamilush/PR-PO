@@ -14,6 +14,7 @@
     <string name="password">Password</string>
     <string name="sign_in">Sign In</string>
     <string name="app_version">App Version</string>
+    <string name="logout">Logout</string>
 
     <string-array name="data_name">
         <item>Nadia</item>

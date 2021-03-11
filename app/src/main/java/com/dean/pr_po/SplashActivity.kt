@@ -23,43 +23,17 @@ import java.io.IOException
 
 class SplashActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivitySplashBinding
-    private val SPLASH_TIME_OUT:Long = 3000
-    lateinit var pConfig: GlobalConfig
-
     companion object {
         val TAG = SplashActivity::class.java.simpleName
     }
 
-    @SuppressLint("SetTextI18n")
+    private lateinit var binding: ActivitySplashBinding
+    private val SPLASH_TIME_OUT:Long = 3000
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        /*val fileEvents = File(GlobalConfig.pInitAppl)
-        if(fileEvents.exists())
-            binding.textViewApp.text = GlobalConfig.pVer + "." + GlobalConfig.pDev
-        else{
-            Toast.makeText(this@SplashActivity, "File INITAPPL Tidak ditemukan, Hubungi segera Administrator..!", Toast.LENGTH_SHORT).show()
-        }*/
-        /*val text = StringBuilder()
-        try {
-            val br = BufferedReader(FileReader(fileEvents))
-            var line: String?
-            while (br.readLine().also { line = it } != null) {
-                text.append(line)
-                GlobalConfig.setBaseURL(GlobalConfig(),text.toString())
-            }
-            br.close()
-        } catch (e: IOException) {
-        }
-        if(GlobalConfig.baseURL!= null){
-            pConfig.pIp_webser = pConfig.baseURL
-            binding.textViewApp.text = pConfig.pVer + "." + pConfig.pDev
-        }else{
-            Toast.makeText(this@SplashActivity, "File INITAPPL Tidak ditemukan, Hubungi segera Administrator..!", Toast.LENGTH_SHORT).show()
-        }*/
 
         Handler(Looper.getMainLooper()).postDelayed({
             getVersion()
@@ -82,7 +56,7 @@ class SplashActivity : AppCompatActivity() {
 
                 binding.progressBar.visibility = View.INVISIBLE
                 val result = String (responseBody)
-                Log.d(SplashActivity.TAG, result)
+                Log.d(TAG, result)
                 try {
                     val responseObject = JSONObject(result)
                     val returnMessage = responseObject.getJSONArray("return")

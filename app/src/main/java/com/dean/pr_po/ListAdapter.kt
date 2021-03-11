@@ -30,17 +30,8 @@ class ListAdapter (private val listUser: ArrayList<UserData>):  RecyclerView.Ada
     override fun getItemCount(): Int = listUser.size
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        //    val data = listUser[position]
         holder.bind(listUser[position])
 
-        /* holder.itemView.setOnClickListener {
-             val dataUser = UserData(
-                 data.name
-             )
-             val intentDetail = Intent(mcontext, DetailActivity::class.java)
-           //  intentDetail.putExtra(DetailActivity.EXTRA_DATA, dataUser)
-             mcontext.startActivity(intentDetail)
-         }*/
     }
 
     inner class ListViewHolder (private val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root){

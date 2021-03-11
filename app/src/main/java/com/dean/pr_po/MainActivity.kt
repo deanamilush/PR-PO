@@ -3,13 +3,14 @@ package com.dean.pr_po
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.dean.pr_po.databinding.ActivityMainBinding
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.AsyncHttpResponseHandler
@@ -27,11 +28,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainBinding: ActivityMainBinding
     private val list = ArrayList<UserData>()
     private val adapter = ListAdapter(list)
+    private var userData = UserData()
+    private lateinit var mUserPreference: UserPreference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainBinding.root)
+
+        mUserPreference = UserPreference(this)
 
         mainBinding.recyclerView.setHasFixedSize(true)
         mainBinding.recyclerView.addItemDecoration(DividerItemDecoration(mainBinding.recyclerView.context, DividerItemDecoration.VERTICAL))
@@ -43,17 +48,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun getListUser(){
         mainBinding.progressBar.visibility = View.VISIBLE
-        val pData = intent.getParcelableExtra<UserData>(pDATA) as UserData
+        val pData = intent.getParcelableExtra<UserData>(pDATA) as? UserData
 
         val client = AsyncHttpClient()
         val DEFAULT_TIMEOUT = 40 * 1000
         client.setTimeout(DEFAULT_TIMEOUT)
         val params = RequestParams()
-        params.put("ashost", pData.pAshost)
-        params.put("sysnr", pData.pSysnr)
-        params.put("client", pData.pClient)
-        params.put("usap", pData.pUser_sap)
-        params.put("psap", pData.pPass_sap)
+        params.put("ashost", pData?.pAshost)
+        params.put("sysnr", pData?.pSysnr)
+        params.put("client", pData?.pClient)
+        params.put("usap", pData?.pUser_sap)
+        params.put("psap", pData?.pPass_sap)
         val url = "http://192.168.1.8/GlobalInc/valPrPo.php"
         client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
@@ -81,8 +86,6 @@ class MainActivity : AppCompatActivity() {
                             }
                             builder.show()
                         } else {
-                            Toast.makeText(this@MainActivity, "CEK CEK CEK", Toast.LENGTH_SHORT)
-                                    .show()
                             for (l in 0 until tPurc.length()){
                                 val user = tPurc.getJSONObject(l)
                                 val userData = UserData()
@@ -142,21 +145,34 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun showList(){
-        mainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
-        val listUserAdapter = ListAdapter(list)
-        mainBinding.recyclerView.adapter = listUserAdapter
+    private fun actionLogout(){
 
-        listUserAdapter.setOnItemClickCallback(object : ListAdapter.OnItemClickCallback{
-            override fun onItemClicked(data: UserData) {
-                //showSelected(data)
-            }
-        })
+        val builder = AlertDialog.Builder(this@MainActivity)
+        builder.setTitle("Informasi")
+        builder.setIcon(R.drawable.warning)
+        builder.setMessage("Anda Yakin ingin Logout")
+        builder.setCancelable(false)
+        builder.setPositiveButton("Ya") { dialog, which ->
+            mUserPreference.deleteUser(userData)
+            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+        }
+        builder.setNegativeButton("No"){ dialog, which ->
+            dialog.cancel()
+        }
+        builder.show()
+
     }
 
-    private fun showSelected(user: UserData) {
-        val intentDetail = Intent(this, DetailActivity::class.java)
-        intentDetail.putExtra(DetailActivity.EXTRA_DATA, user)
-        startActivity(intentDetail)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_logout) {
+            actionLogout()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 }

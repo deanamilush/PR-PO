@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.dean.pr_po.databinding.ActivityLoginBinding
-import com.google.gson.Gson
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.AsyncHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -19,9 +18,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
         private val TAG = LoginActivity::class.java.simpleName
+        private const val FIELD_REQUIRED = "Field tidak boleh kosong"
     }
     private lateinit var loginBinding: ActivityLoginBinding
-    private val data = UserData()
+    private lateinit var mUserPreference: UserPreference
+    private var userData = UserData()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,10 +30,22 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         loginBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(loginBinding.root)
 
-     //   getSeasonUser()
         loginBinding.progressBar.visibility = View.INVISIBLE
 
         loginBinding.btnLogin.setOnClickListener(this)
+
+        mUserPreference = UserPreference(this)
+        showExistingPreference()
+    }
+
+    private fun showExistingPreference() {
+        userData = mUserPreference.getUser()
+        if (userData.username?.isEmpty() == true){
+            loginBinding.valueLogin.text = null
+            loginBinding.valuePassword.text = null
+        }else{
+            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+        }
     }
 
     private fun getUserLogin(){
@@ -135,53 +148,30 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
-    private fun getSeasonUser(){
-        if (AppPreferences.isLogin) {
-            AppPreferences.isLogin = false
-            AppPreferences.username = ""
-            AppPreferences.password = ""
-        } else {
-            val username = loginBinding.valueLogin.text.toString()
-            val password = loginBinding.valuePassword.text.toString()
-            if (username.isNotBlank() && password.isNotBlank()) {
-                AppPreferences.isLogin = true
-                AppPreferences.username = username
-                AppPreferences.password = password
-            } else {
-                Toast.makeText(this, "login validation", Toast.LENGTH_SHORT).show()
-            }
-        }
-        //setupLoginLayout()
-    }
-
-    private fun setupLoginLayout() {
-        if (AppPreferences.isLogin) {
-            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-            finish()
-        } else {
-            val builder = AlertDialog.Builder(this@LoginActivity)
-            builder.setTitle("Error")
-            builder.setIcon(R.drawable.warning)
-            builder.setMessage("Login terlebih dahulu")
-            builder.setCancelable(false)
-            builder.setPositiveButton("OK") { dialog, which ->
-                dialog.cancel()
-            }
-            builder.show()
-        }
-    }
-
     override fun onClick(p0: View?) {
 
-        var username = loginBinding.valueLogin.text.toString()
-        var password = loginBinding.valuePassword.text.toString()
+        val username = loginBinding.valueLogin.text.toString()
+        val password = loginBinding.valuePassword.text.toString()
 
         if (username.isEmpty()){
-            loginBinding.valueLogin.setError("Tidak Boleh Kosong")
+            loginBinding.valueLogin.error = FIELD_REQUIRED
+            return
         } else if (password.isEmpty()){
-            loginBinding.valuePassword.setError("Tidak Boleh Kosong")
+            loginBinding.valuePassword.error = FIELD_REQUIRED
+            return
         } else  {
             getUserLogin()
+            saveUser(username, password)
         }
+    }
+
+    private fun saveUser(username: String, password: String) {
+        val userPreference = UserPreference(this)
+
+        userData.username = username
+        userData.password = password
+
+        userPreference.setUser(userData)
+        Toast.makeText(this, "Data tersimpan", Toast.LENGTH_SHORT).show()
     }
 }
