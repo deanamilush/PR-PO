@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
     private fun getListUser(){
         mainBinding.progressBar.visibility = View.VISIBLE
         val pData = intent.getParcelableExtra<UserData>(pDATA) as? UserData
-
         val client = AsyncHttpClient()
         val DEFAULT_TIMEOUT = 40 * 1000
         client.setTimeout(DEFAULT_TIMEOUT)

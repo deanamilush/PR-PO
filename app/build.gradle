@@ -16,8 +16,8 @@ android {
         versionName "1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String" , "PARAMS_USERNAME" , '"admin"')
-        buildConfigField("String" , "PARAMS_PASSWORD" , '"1234"')
+        buildConfigField("String" , "PARAMS_USERNAME" , '"pembelian"')
+        buildConfigField("String" , "PARAMS_PASSWORD" , '"123456"')
     }
 
     buildTypes {

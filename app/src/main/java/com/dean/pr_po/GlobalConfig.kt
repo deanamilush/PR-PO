@@ -7,7 +7,7 @@ class GlobalConfig {
         var pGlobalPath = "/storage/emulated/0/init/"
         val urlLogin = SERVER+"loginService.php"
         val urlVersion = SERVER+"verService.php"
-        val pId_app = "A200706002"
+        val pId_app = "R210303003"
         var pInitAppl: String = pGlobalPath + "initappl.txt"
         var baseURL: String? = null
         var pAppname: String? = null

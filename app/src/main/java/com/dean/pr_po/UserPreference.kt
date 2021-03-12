@@ -4,7 +4,7 @@ import android.content.Context
 
 internal class UserPreference(context: Context) {
 
-    companion object{
+    companion object {
         private const val PREFS_NAME = "user_pref"
         private const val USERNAME = "username"
         private const val PASSWORD = "password"
@@ -19,8 +19,10 @@ internal class UserPreference(context: Context) {
         editor.apply()
     }
 
-    fun deleteUser(value: UserData){
+    fun deleteUser(value: UserData) {
         val edit = preferences.edit()
+        edit.remove(value.username)
+        edit.remove(value.password)
         edit.remove(USERNAME)
         edit.remove(PASSWORD)
         edit.clear()

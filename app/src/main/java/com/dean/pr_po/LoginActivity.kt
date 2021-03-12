@@ -1,5 +1,6 @@
 package com.dean.pr_po
 
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -23,7 +24,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var loginBinding: ActivityLoginBinding
     private lateinit var mUserPreference: UserPreference
     private var userData = UserData()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,13 +99,20 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             pUserData.pClient = responseLogin.getString("client")
                             pUserData.pPass_sap = responseLogin.getString("password")
                             //validasi username
-                            if (pUserData.username.equals(loginUser) && pUserData.password.equals(loginPass)){
+                            if (pUserData.username.equals(loginUser) && pPass.equals(loginPass)){
                                 loginBinding.progressBar.visibility = View.INVISIBLE
                                 val gotomain = Intent(this@LoginActivity, MainActivity::class.java)
                                 gotomain.putExtra(MainActivity.pDATA, pUserData)
+                                gotomain.putExtra(SplashActivity.pDATA, pUserData)
                                 startActivity(gotomain)
+
+                                val values = ContentValues()
+                                values.put(TlogContract.TlogColumns.ID_USER, pUserData.pId_user)
+                                values.put(TlogContract.TlogColumns.ID_CONN, pUserData.pId_conn)
+                                values.put(TlogContract.TlogColumns.ID_APP, GlobalConfig.pId_app)
+
                                 finish()
-                            } else /*if (username != loginUser && password != loginPass)*/{
+                            } else {
                                 loginBinding.progressBar.visibility = View.INVISIBLE
                                 val builder = AlertDialog.Builder(this@LoginActivity)
                                 builder.setTitle("Error")
@@ -159,10 +166,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         } else if (password.isEmpty()){
             loginBinding.valuePassword.error = FIELD_REQUIRED
             return
-        } else  {
+        } else{
             getUserLogin()
-            saveUser(username, password)
         }
+        saveUser(username, password)
     }
 
     private fun saveUser(username: String, password: String) {
@@ -173,5 +180,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
         userPreference.setUser(userData)
         Toast.makeText(this, "Data tersimpan", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val toExit = Intent(Intent.ACTION_MAIN)
+        toExit.addCategory(Intent.CATEGORY_HOME)
+        toExit.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(toExit)
+        finish()
     }
 }
