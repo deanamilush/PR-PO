@@ -40,7 +40,7 @@ class SplashActivity : AppCompatActivity() {
 
         mUserPreference = UserPreference(this)
         userData = mUserPreference.getUser()
-        val pData = intent.getParcelableExtra<UserData>(pDATA) as UserData
+//        val pData = intent.getParcelableExtra<UserData>(pDATA) as UserData
 
         Handler(Looper.getMainLooper()).postDelayed({
             getVersion()
