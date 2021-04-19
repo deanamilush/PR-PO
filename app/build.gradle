@@ -16,8 +16,8 @@ android {
         versionName "1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String" , "PARAMS_USERNAME" , '"pembelian"')
-        buildConfigField("String" , "PARAMS_PASSWORD" , '"123456"')
+        buildConfigField("String" , "PARAMS_USERNAME" , '"admin"')
+        buildConfigField("String" , "PARAMS_PASSWORD" , '"1234"')
     }
 
     buildTypes {
@@ -58,4 +58,5 @@ dependencies {
 
     implementation 'com.loopj.android:android-async-http:1.4.11'
     implementation 'com.amitshekhar.android:jackson-android-networking:1.0.1'
+    implementation "androidx.work:work-runtime:2.5.0"
 }

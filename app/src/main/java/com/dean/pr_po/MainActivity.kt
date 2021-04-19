@@ -1,6 +1,11 @@
 package com.dean.pr_po
 
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -9,6 +14,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dean.pr_po.databinding.ActivityMainBinding
@@ -22,7 +29,9 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val pDATA = "extra_data"
+        const val pCurrent = "extra_current"
         private val TAG = MainActivity::class.java.simpleName
+        private const val JOB_ID = 10
     }
 
     private lateinit var mainBinding: ActivityMainBinding
@@ -30,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private val adapter = ListAdapter(list)
     private var userData = UserData()
     private lateinit var mUserPreference: UserPreference
+    private lateinit var getCurrentData: GetCurrentData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +53,18 @@ class MainActivity : AppCompatActivity() {
         mainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         mainBinding.recyclerView.adapter = adapter
 
-        getListUser()
+
+
+        startJob()
+    }
+
+    private fun configViewModel(adapter: ListAdapter) {
+        getCurrentData.getListUsers().observe(this, Observer { listUsers ->
+            if (listUsers != null) {
+                adapter.setData(listUsers)
+                showLoading(false)
+            }
+        })
     }
 
     private fun getListUser(){
@@ -59,10 +80,10 @@ class MainActivity : AppCompatActivity() {
         params.put("usap", pData?.pUser_sap)
         params.put("psap", pData?.pPass_sap)
         val url = "http://192.168.1.8/GlobalInc/valPrPo.php"
-        client.post(url, params, object: AsyncHttpResponseHandler(){
+        client.post(url, params, object : AsyncHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
                 mainBinding.progressBar.visibility = View.INVISIBLE
-                val result = String (responseBody)
+                val result = String(responseBody)
                 Log.d(TAG, result)
                 try {
                     val responseObject = JSONObject(result)
@@ -70,11 +91,11 @@ class MainActivity : AppCompatActivity() {
                     val tPurc = responseObject.getJSONArray("t_purc")
                     val tPr = responseObject.getJSONArray("t_pr")
                     val tPo = responseObject.getJSONArray("t_po")
-                    for (i in 0 until returnMessage.length()){
+                    for (i in 0 until returnMessage.length()) {
                         val jsonObject = returnMessage.getJSONObject(i)
                         val typeErrorLogin = jsonObject.getString("type")
                         val messageErrorLogin = jsonObject.getString("msg")
-                        if (typeErrorLogin.equals("E")){
+                        if (typeErrorLogin.equals("E")) {
                             mainBinding.progressBar.visibility = View.INVISIBLE
                             val builder = AlertDialog.Builder(this@MainActivity)
                             builder.setTitle("Error")
@@ -85,7 +106,7 @@ class MainActivity : AppCompatActivity() {
                             }
                             builder.show()
                         } else {
-                            for (l in 0 until tPurc.length()){
+                            for (l in 0 until tPurc.length()) {
                                 val user = tPurc.getJSONObject(l)
                                 val userData = UserData()
                                 userData.name = user.getString("BEDNR")
@@ -93,7 +114,7 @@ class MainActivity : AppCompatActivity() {
 
                                 for (j in 0 until tPr.length()) {
                                     val dataPr = tPr.getJSONObject(j)
-                                    if (lBednr.equals(dataPr.getString("BEDNR"))){
+                                    if (lBednr.equals(dataPr.getString("BEDNR"))) {
                                         userData.prThisMonth = dataPr.getInt("QCUR_MT")
                                         userData.prLastMonth = dataPr.getInt("QPREV_MT")
                                         userData.prMonthAgo = dataPr.getInt("QLAST_MT")
@@ -102,7 +123,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                                 for (k in 0 until tPo.length()) {
                                     val dataPo = tPo.getJSONObject(k)
-                                    if (lBednr.equals(dataPo.getString("BEDNR"))){
+                                    if (lBednr.equals(dataPo.getString("BEDNR"))) {
                                         userData.poThisMonth = dataPo.getInt("QCUR_MT")
                                         userData.poLastMonth = dataPo.getInt("QPREV_MT")
                                         userData.poMonthAgo = dataPo.getInt("QLAST_MT")
@@ -144,8 +165,27 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun actionLogout(){
+    private fun startJob(){
+        getListUser()
+        showLoading(false)
+        val mServiceComponent = ComponentName(this, GetCurrentData::class.java)
+        val pData = intent.getParcelableExtra<UserData>(pDATA) as? UserData
+        val builder = JobInfo.Builder(JOB_ID, mServiceComponent)
+        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+        builder.setRequiresDeviceIdle(false)
+        builder.setRequiresCharging(false)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            builder.setPeriodic(900000) //15 menit
+        } else {
+            builder.setPeriodic(180000) //3 menit
+        }
 
+        val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        scheduler.schedule(builder.build())
+        Toast.makeText(this, "Job Service started", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun actionLogout() {
         val builder = AlertDialog.Builder(this@MainActivity)
         builder.setTitle("Informasi")
         builder.setIcon(R.drawable.warning)
@@ -155,7 +195,7 @@ class MainActivity : AppCompatActivity() {
             mUserPreference.deleteUser(userData)
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
         }
-        builder.setNegativeButton("No"){ dialog, which ->
+        builder.setNegativeButton("No") { dialog, which ->
             dialog.cancel()
         }
         builder.show()
@@ -174,4 +214,11 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun showLoading(state: Boolean) {
+        if (state) {
+            mainBinding.progressBar.visibility = View.VISIBLE
+        } else {
+            mainBinding.progressBar.visibility = View.GONE
+        }
+    }
 }
