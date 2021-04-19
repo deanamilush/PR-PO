@@ -2,15 +2,12 @@ package com.dean.pr_po
 
 import android.app.job.JobParameters
 import android.app.job.JobService
-import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.dean.pr_po.databinding.ActivityMainBinding
+import androidx.lifecycle.ViewModel
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.AsyncHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -26,9 +23,13 @@ class GetCurrentData : JobService() {
     val list = ArrayList<UserData>()
     val adapter = ListAdapter(list)
 
+    fun getListUsers(): LiveData<ArrayList<UserData>> {
+        return listAllUser
+    }
+
     override fun onStartJob(params: JobParameters): Boolean {
         Log.d(TAG, "onStartJob()")
-        GetData(params)
+        getData(params)
         return true
     }
 
@@ -37,7 +38,7 @@ class GetCurrentData : JobService() {
         return true
     }
 
-    private fun GetData(job: JobParameters) {
+    fun getData(job: JobParameters) {
         Log.d(TAG, "getCurrentWeather: Mulai.....")
         val client = AsyncHttpClient()
         val DEFAULT_TIMEOUT = 40 * 1000
@@ -101,7 +102,10 @@ class GetCurrentData : JobService() {
 
                                     list.add(userData)
                                     listAllUser.postValue(list)
-                                    adapter.notifyDataSetChanged()
+
+                                    /*list.add(userData)
+                                    adapter.setData(list)
+                                    adapter.notifyDataSetChanged()*/
 
                                 }
                             }

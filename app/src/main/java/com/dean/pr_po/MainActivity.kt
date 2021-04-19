@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -15,6 +14,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dean.pr_po.databinding.ActivityMainBinding
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private val adapter = ListAdapter(list)
     private var userData = UserData()
     private lateinit var mUserPreference: UserPreference
+    private lateinit var getCurrentData: GetCurrentData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,15 +53,19 @@ class MainActivity : AppCompatActivity() {
         mainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         mainBinding.recyclerView.adapter = adapter
 
-        startJob()
-      //  getListUser()
 
-        /*val pData = intent.getParcelableExtra<UserData>(pCurrent) as? UserData
-        if (pData != null) {
-            list.add(pData)
-        }*/
+
+        startJob()
     }
 
+    private fun configViewModel(adapter: ListAdapter) {
+        getCurrentData.getListUsers().observe(this, Observer { listUsers ->
+            if (listUsers != null) {
+                adapter.setData(listUsers)
+                showLoading(false)
+            }
+        })
+    }
 
     private fun getListUser(){
         mainBinding.progressBar.visibility = View.VISIBLE
@@ -160,6 +166,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startJob(){
+        getListUser()
         showLoading(false)
         val mServiceComponent = ComponentName(this, GetCurrentData::class.java)
         val pData = intent.getParcelableExtra<UserData>(pDATA) as? UserData
@@ -179,7 +186,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun actionLogout() {
-
         val builder = AlertDialog.Builder(this@MainActivity)
         builder.setTitle("Informasi")
         builder.setIcon(R.drawable.warning)

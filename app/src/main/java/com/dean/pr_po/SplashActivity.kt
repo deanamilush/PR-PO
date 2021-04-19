@@ -16,10 +16,6 @@ import com.loopj.android.http.AsyncHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
-import java.io.IOException
 
 class SplashActivity : AppCompatActivity() {
 
@@ -40,28 +36,12 @@ class SplashActivity : AppCompatActivity() {
 
         mUserPreference = UserPreference(this)
         userData = mUserPreference.getUser()
-//        val pData = intent.getParcelableExtra<UserData>(pDATA) as UserData
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            getVersion()
-
-            /*if (pData != null){
-                val gotomain = Intent(this@SplashActivity, MainActivity::class.java)
-                gotomain.putExtra(MainActivity.pDATA, pData)
-                startActivity(gotomain)
-            } else{
-                Toast.makeText(this@SplashActivity, "anda harus login", Toast.LENGTH_SHORT)
-                    .show()
-            }*/
-        }, SPLASH_TIME_OUT)
-
+        getVersion()
     }
 
     private fun getVersion(){
         splashBinding.progressBar.visibility = View.VISIBLE
-        val versionCode = BuildConfig.VERSION_CODE
-        val versionName = BuildConfig.VERSION_NAME
-        val sVerCode  = versionCode.toString()
         val client = AsyncHttpClient()
         val params = RequestParams()
         params.put("id_app", GlobalConfig.pId_app)
@@ -92,28 +72,15 @@ class SplashActivity : AppCompatActivity() {
                             }
                             builder.show()
                         } else {
-
                             val resultMessage = responseObject.getJSONArray("result")
                             val responseLogin = resultMessage.getJSONObject(0)
                             dataUser.version = responseLogin.getString("version")
                             dataUser.dev = responseLogin.getString("dev")
-
-                            if (sVerCode.equals(dataUser.version) && versionName.equals(dataUser.dev)){
-                                splashBinding.tvVersion.text = dataUser.version + "." + dataUser.dev
-                                Handler(Looper.getMainLooper()).postDelayed({
-                                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                                    finish()
-                                }, SPLASH_TIME_OUT)
-                            } else{
-                                val builder = AlertDialog.Builder(this@SplashActivity)
-                                builder.setTitle("Error")
-                                builder.setMessage("Segera Perbaharui Aplikasi versi Terbaru..!")
-                                builder.setCancelable(false)
-                                builder.setPositiveButton(android.R.string.yes) { dialog, which ->
-                                    dialog.cancel()
-                                }
-                                builder.show()
-                            }
+                            splashBinding.tvVersion.text = dataUser.version + "." + dataUser.dev
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                                finish()
+                            }, SPLASH_TIME_OUT)
                         }
                     }
                 } catch (e: Exception) {
