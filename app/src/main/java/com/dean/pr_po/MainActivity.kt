@@ -29,9 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val pDATA = "extra_data"
-        const val pCurrent = "extra_current"
         private val TAG = MainActivity::class.java.simpleName
-        private const val JOB_ID = 10
     }
 
     private lateinit var mainBinding: ActivityMainBinding
@@ -39,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     private val adapter = ListAdapter(list)
     private var userData = UserData()
     private lateinit var mUserPreference: UserPreference
-    private lateinit var getCurrentData: GetCurrentData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,34 +50,22 @@ class MainActivity : AppCompatActivity() {
         mainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         mainBinding.recyclerView.adapter = adapter
 
-
-
-   //     startJob()
         getListUser()
-    }
-
-    private fun configViewModel(adapter: ListAdapter) {
-        getCurrentData.getListUsers().observe(this, Observer { listUsers ->
-            if (listUsers != null) {
-                adapter.setData(listUsers)
-                showLoading(false)
-            }
-        })
     }
 
     private fun getListUser(){
         mainBinding.progressBar.visibility = View.VISIBLE
-        val pData = intent.getParcelableExtra<UserData>(pDATA) as? UserData
+        val dataPreference= mUserPreference.getUser()
         val client = AsyncHttpClient()
         val DEFAULT_TIMEOUT = 40 * 1000
         client.setTimeout(DEFAULT_TIMEOUT)
         val params = RequestParams()
-        params.put("ashost", pData?.pAshost)
-        params.put("sysnr", pData?.pSysnr)
-        params.put("client", pData?.pClient)
-        params.put("usap", pData?.pUser_sap)
-        params.put("psap", pData?.pPass_sap)
-        val url = "http://192.168.1.8/GlobalInc/valPrPo.php"
+        params.put("ashost", dataPreference.pAshost)
+        params.put("sysnr", dataPreference.pSysnr)
+        params.put("client", dataPreference.pClient)
+        params.put("usap", dataPreference.pUser_sap)
+        params.put("psap", dataPreference.pPass_sap)
+        val url = "http://36.91.208.115/GlobalInc/valPrPO.php"
         client.post(url, params, object : AsyncHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
                 mainBinding.progressBar.visibility = View.INVISIBLE
@@ -152,6 +137,7 @@ class MainActivity : AppCompatActivity() {
                     404 -> "$statusCode : Not Found"
                     else -> "$statusCode : ${error.message}"
                 }
+
                 val builder = AlertDialog.Builder(this@MainActivity)
                 builder.setTitle("Error")
                 builder.setIcon(R.drawable.warning)
@@ -164,26 +150,6 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-    }
-
-    private fun startJob(){
-        getListUser()
-        showLoading(false)
-        val mServiceComponent = ComponentName(this, GetCurrentData::class.java)
-        val pData = intent.getParcelableExtra<UserData>(pDATA) as? UserData
-        val builder = JobInfo.Builder(JOB_ID, mServiceComponent)
-        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-        builder.setRequiresDeviceIdle(false)
-        builder.setRequiresCharging(false)
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            builder.setPeriodic(900000) //15 menit
-        } else {
-            builder.setPeriodic(180000) //3 menit
-        }
-
-        val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        scheduler.schedule(builder.build())
-        Toast.makeText(this, "Job Service started", Toast.LENGTH_SHORT).show()
     }
 
     private fun actionLogout() {

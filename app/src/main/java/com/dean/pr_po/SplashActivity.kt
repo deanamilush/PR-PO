@@ -33,8 +33,8 @@ class SplashActivity : AppCompatActivity() {
         splashBinding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(splashBinding.root)
 
-        mUserPreference = UserPreference(this)
-        userData = mUserPreference.getUser()
+        /*mUserPreference = UserPreference(this)
+        userData = mUserPreference.getUser()*/
 
         getVersion()
         }
@@ -78,7 +78,6 @@ class SplashActivity : AppCompatActivity() {
                             splashBinding.tvVersion.text = dataUser.version + "." + dataUser.dev
                             Handler(Looper.getMainLooper()).postDelayed({
                                 startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                                finish()
                             }, SPLASH_TIME_OUT)
                         }
                     }

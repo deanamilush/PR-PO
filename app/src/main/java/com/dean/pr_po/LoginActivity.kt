@@ -1,11 +1,9 @@
 package com.dean.pr_po
 
-import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -36,15 +34,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         loginBinding.btnLogin.setOnClickListener(this)
 
         mUserPreference = UserPreference(this)
-       // showExistingPreference()
+        showExistingPreference()
 
     }
 
     private fun showExistingPreference() {
-        userData = mUserPreference.getUser()
-        if (userData.username?.isEmpty() == true){
-            loginBinding.valueLogin.text = null
-            loginBinding.valuePassword.text = null
+       val dataPreference = mUserPreference.getUser()
+        if(dataPreference.username.equals("")){
+            loginBinding.valueLogin.requestFocus()
         }else{
             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
         }
@@ -98,7 +95,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             getLog()
                         }
                     }
-
                 } catch (e: Exception) {
                     Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT)
                             .show()
@@ -114,6 +110,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     404 -> "$statusCode : Not Found"
                     else -> "$statusCode : ${error.message}"
                 }
+
                 val builder = AlertDialog.Builder(this@LoginActivity)
                 builder.setTitle("Error")
                 builder.setIcon(R.drawable.warning)
@@ -178,13 +175,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
                             if (userData.username.equals(loginUser) && userData.password.equals(loginPass)){
                                 loginBinding.progressBar.visibility = View.INVISIBLE
+                                saveUser(loginUser, loginPass, userData.pUser_sap, userData.pPass_sap, userData.pAshost, userData.pSysnr, userData.pClient, userData.pId_user)
                                 val gotomain = Intent(this@LoginActivity, MainActivity::class.java)
                                 startActivity(gotomain)
 
-                                /* val values = ContentValues()
-                                 values.put(TlogContract.TlogColumns.ID_USER, pUserData.pId_user)
-                                 values.put(TlogContract.TlogColumns.ID_CONN, pUserData.pId_conn)
-                                 values.put(TlogContract.TlogColumns.ID_APP, GlobalConfig.pId_app)*/
                             } else {
                                 loginBinding.progressBar.visibility = View.INVISIBLE
                                 val builder = AlertDialog.Builder(this@LoginActivity)
@@ -238,18 +232,19 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         } else{
             getUserLogin()
         }
-
-       // saveUser(username, password)
     }
 
-    private fun saveUser(username: String, password: String) {
+    private fun saveUser(username: String, password: String, userSap: String, passSap: String, ashost: String, sysnr: String, client: String, idUser: String) {
         val userPreference = UserPreference(this)
-
         userData.username = username
         userData.password = password
-
+        userData.pUser_sap = userSap
+        userData.pPass_sap = passSap
+        userData.pAshost = ashost
+        userData.pSysnr = sysnr
+        userData.pClient = client
+        userData.pId_user = idUser
         userPreference.setUser(userData)
-        Toast.makeText(this, "Data tersimpan", Toast.LENGTH_SHORT).show()
     }
 
     override fun onBackPressed() {
