@@ -55,7 +55,8 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        startJob()
+   //     startJob()
+        getListUser()
     }
 
     private fun configViewModel(adapter: ListAdapter) {

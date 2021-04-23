@@ -36,7 +36,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         loginBinding.btnLogin.setOnClickListener(this)
 
         mUserPreference = UserPreference(this)
-        showExistingPreference()
+       // showExistingPreference()
 
     }
 
@@ -54,13 +54,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         loginBinding.progressBar.visibility = View.VISIBLE
         val loginUser = loginBinding.valueLogin.text.toString()
         val loginPass = loginBinding.valuePassword.text.toString()
-        val pUser = BuildConfig.PARAMS_USERNAME
-        val pPass = BuildConfig.PARAMS_PASSWORD
         val client = AsyncHttpClient()
         val params = RequestParams()
         params.put("id_app", GlobalConfig.pId_app)
-        params.put("username", pUser)
-        params.put("password", pPass)
+        params.put("username", loginUser)
+        params.put("password", loginPass)
         val url = GlobalConfig.urlLogin
         client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
@@ -70,8 +68,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 try {
                     val responseObject = JSONObject(result)
                     val returnMessage = responseObject.getJSONArray("return")
+                    val resultMessage = responseObject.getJSONArray("result")
                     for (i in 0 until returnMessage.length()){
-                        val pUserData = UserData()
                         val jsonObject = returnMessage.getJSONObject(i)
                         val typeErrorLogin = jsonObject.getString("type")
                         val messageErrorLogin = jsonObject.getString("msg")
@@ -87,46 +85,20 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             builder.show()
                         } else {
                             // get username and password from webservice
-                            val resultMessage = responseObject.getJSONArray("result")
                             val responseLogin = resultMessage.getJSONObject(0)
-                            pUserData.username = responseLogin.getString("username")
-                            pUserData.password = responseLogin.getString("password")
-                            pUserData.pId_user = responseLogin.getString("id_user")
-                            pUserData.pId_conn = responseLogin.getString("id_conn")
-                            pUserData.pPlant = responseLogin.getString("plant")
-                            pUserData.pUser_sap = responseLogin.getString("user_sap")
-                            pUserData.pSysnr = responseLogin.getString("sysnr")
-                            pUserData.pAshost = responseLogin.getString("ashost")
-                            pUserData.pClient = responseLogin.getString("client")
-                            pUserData.pPass_sap = responseLogin.getString("password")
-                            //validasi username
-                            if (pUserData.username.equals(loginUser) && pPass.equals(loginPass)){
-                                loginBinding.progressBar.visibility = View.INVISIBLE
-                                val gotomain = Intent(this@LoginActivity, MainActivity::class.java)
-                                gotomain.putExtra(MainActivity.pDATA, pUserData)
-                                gotomain.putExtra(SplashActivity.pDATA, pUserData)
-                                startActivity(gotomain)
-
-                                val values = ContentValues()
-                                values.put(TlogContract.TlogColumns.ID_USER, pUserData.pId_user)
-                                values.put(TlogContract.TlogColumns.ID_CONN, pUserData.pId_conn)
-                                values.put(TlogContract.TlogColumns.ID_APP, GlobalConfig.pId_app)
-
-                                finish()
-                            } else {
-                                loginBinding.progressBar.visibility = View.INVISIBLE
-                                val builder = AlertDialog.Builder(this@LoginActivity)
-                                builder.setTitle("Error")
-                                builder.setIcon(R.drawable.warning)
-                                builder.setMessage("Username / Password Salah")
-                                builder.setCancelable(false)
-                                builder.setPositiveButton("Coba Lagi") { dialog, which ->
-                                    dialog.cancel()
-                                }
-                                builder.show()
-                            }
+                            userData.pId_user = responseLogin.getString("id_user")
+                            userData.username = responseLogin.getString("username")
+                            userData.pId_conn = responseLogin.getString("id_conn")
+                            userData.pPlant = responseLogin.getString("plant")
+                            userData.pUser_sap = responseLogin.getString("user_sap")
+                            userData.pSysnr = responseLogin.getString("sysnr")
+                            userData.pAshost = responseLogin.getString("ashost")
+                            userData.pClient = responseLogin.getString("client")
+                            userData.pPass_sap = responseLogin.getString("password")
+                            getLog()
                         }
                     }
+
                 } catch (e: Exception) {
                     Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT)
                             .show()
@@ -156,6 +128,102 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
+    private fun getLog() {
+        loginBinding.progressBar.visibility = View.VISIBLE
+      //  val pData = intent.getParcelableExtra<UserData>(MainActivity.pDATA) as? UserData
+        val loginUser = loginBinding.valueLogin.text.toString()
+        val loginPass = loginBinding.valuePassword.text.toString()
+        val client = AsyncHttpClient()
+        val params = RequestParams()
+        params.put("id_user", userData.pId_user)
+        params.put("id_app", GlobalConfig.pId_app)
+        params.put("id_conn", userData.pId_conn)
+        val url = "http://36.91.208.115/GlobalInc/verifLog.php"
+        client.post(url, params, object : AsyncHttpResponseHandler() {
+            override fun onSuccess(
+                    statusCode: Int,
+                    headers: Array<out Header>?,
+                    responseBody: ByteArray
+            ) {
+                val result = String(responseBody)
+                Log.d(SplashActivity.TAG, result)
+                try {
+                    val responseObject = JSONObject(result)
+                    val returnMessage = responseObject.getJSONArray("return")
+                    val resultMessage = responseObject.getJSONArray("result")
+
+                    for (i in 0 until returnMessage.length()) {
+                        val jsonObject = returnMessage.getJSONObject(i)
+                        val typeErrorLogin = jsonObject.getString("type")
+                        val messageErrorLogin = jsonObject.getString("msg")
+                        if (typeErrorLogin.equals("E")) {
+                            val builder = AlertDialog.Builder(this@LoginActivity)
+                            builder.setTitle("Error")
+                            builder.setMessage(messageErrorLogin)
+                            builder.setCancelable(false)
+                            builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                                dialog.cancel()
+                            }
+                            builder.show()
+                        } else {
+                            val responseLogin = resultMessage.getJSONObject(0)
+                            userData.pPlant = responseLogin.getString("plant")
+                            userData.username = responseLogin.getString("username")
+                            userData.password = responseLogin.getString("pass")
+                            userData.pUser_sap = responseLogin.getString("user_sap")
+                            userData.pPass_sap = responseLogin.getString("password")
+                            userData.pAshost = responseLogin.getString("ashost")
+                            userData.pSysnr = responseLogin.getString("sysnr")
+                            userData.pClient = responseLogin.getString("client")
+
+                            if (userData.username.equals(loginUser) && userData.password.equals(loginPass)){
+                                loginBinding.progressBar.visibility = View.INVISIBLE
+                                val gotomain = Intent(this@LoginActivity, MainActivity::class.java)
+                                startActivity(gotomain)
+
+                                /* val values = ContentValues()
+                                 values.put(TlogContract.TlogColumns.ID_USER, pUserData.pId_user)
+                                 values.put(TlogContract.TlogColumns.ID_CONN, pUserData.pId_conn)
+                                 values.put(TlogContract.TlogColumns.ID_APP, GlobalConfig.pId_app)*/
+                            } else {
+                                loginBinding.progressBar.visibility = View.INVISIBLE
+                                val builder = AlertDialog.Builder(this@LoginActivity)
+                                builder.setTitle("Error")
+                                builder.setIcon(R.drawable.warning)
+                                builder.setMessage("Username / Password Salah")
+                                builder.setCancelable(false)
+                                builder.setPositiveButton("Coba Lagi") { dialog, which ->
+                                    dialog.cancel()
+                                }
+                                builder.show()
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT)
+                            .show()
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onFailure(
+                    statusCode: Int,
+                    headers: Array<out Header>?,
+                    responseBody: ByteArray?,
+                    error: Throwable
+            ) {
+                loginBinding.progressBar.visibility = View.INVISIBLE
+                val errorMessage = when (statusCode) {
+                    401 -> "$statusCode : Bad Request"
+                    403 -> "$statusCode : Forbidden"
+                    404 -> "$statusCode : Not Found"
+                    else -> "$statusCode : ${error.message}"
+                }
+                Toast.makeText(this@LoginActivity, errorMessage, Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
     override fun onClick(p0: View?) {
 
         val username = loginBinding.valueLogin.text.toString()
@@ -170,7 +238,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         } else{
             getUserLogin()
         }
-        saveUser(username, password)
+
+       // saveUser(username, password)
     }
 
     private fun saveUser(username: String, password: String) {
