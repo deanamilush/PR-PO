@@ -127,7 +127,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun getLog() {
         loginBinding.progressBar.visibility = View.VISIBLE
-      //  val pData = intent.getParcelableExtra<UserData>(MainActivity.pDATA) as? UserData
         val loginUser = loginBinding.valueLogin.text.toString()
         val loginPass = loginBinding.valuePassword.text.toString()
         val client = AsyncHttpClient()

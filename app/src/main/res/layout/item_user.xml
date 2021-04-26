@@ -3,9 +3,9 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
+    android:layout_gravity="center"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -212,7 +212,7 @@
             tools:text="1"/>
         <TextView
             android:id="@+id/po_month_ago"
-            android:layout_width="50dp"
+            android:layout_width="65dp"
             android:layout_height="35dp"
             android:layout_marginStart="90dp"
             android:textSize="25sp"

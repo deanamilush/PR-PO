@@ -1,11 +1,6 @@
 package com.dean.pr_po
 
-import android.app.job.JobInfo
-import android.app.job.JobScheduler
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -14,8 +9,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dean.pr_po.databinding.ActivityMainBinding
@@ -24,6 +17,8 @@ import com.loopj.android.http.AsyncHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import org.json.JSONObject
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     private val adapter = ListAdapter(list)
     private var userData = UserData()
     private lateinit var mUserPreference: UserPreference
+    private var jobId = 0
+    private var autoUpdate: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +46,10 @@ class MainActivity : AppCompatActivity() {
         mainBinding.recyclerView.addItemDecoration(DividerItemDecoration(mainBinding.recyclerView.context, DividerItemDecoration.VERTICAL))
         mainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         mainBinding.recyclerView.adapter = adapter
-
-        getListUser()
     }
 
     private fun getListUser(){
+        list.clear()
         mainBinding.progressBar.visibility = View.VISIBLE
         val dataPreference= mUserPreference.getUser()
         val client = AsyncHttpClient()
@@ -169,6 +165,21 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        autoUpdate = Timer()
+        autoUpdate!!.schedule(object : TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    jobId++
+                    Toast.makeText(applicationContext, "Loading For Refresh Data ", Toast.LENGTH_SHORT).show()
+                    getListUser()
+                }
+            }
+        }, 0, 60000) // updates each 40 secs
+
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
@@ -187,5 +198,14 @@ class MainActivity : AppCompatActivity() {
         } else {
             mainBinding.progressBar.visibility = View.GONE
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val toExit = Intent(Intent.ACTION_MAIN)
+        toExit.addCategory(Intent.CATEGORY_HOME)
+        toExit.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(toExit)
+        finish()
     }
 }
