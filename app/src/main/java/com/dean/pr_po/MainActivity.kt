@@ -46,6 +46,8 @@ class MainActivity : AppCompatActivity() {
         mainBinding.recyclerView.addItemDecoration(DividerItemDecoration(mainBinding.recyclerView.context, DividerItemDecoration.VERTICAL))
         mainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         mainBinding.recyclerView.adapter = adapter
+
+        getListUser()
     }
 
     private fun getListUser(){
@@ -164,7 +166,7 @@ class MainActivity : AppCompatActivity() {
         builder.show()
 
     }
-
+/*
     override fun onResume() {
         super.onResume()
         autoUpdate = Timer()
@@ -178,7 +180,7 @@ class MainActivity : AppCompatActivity() {
             }
         }, 0, 60000) // updates each 40 secs
 
-    }
+    }*/
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)

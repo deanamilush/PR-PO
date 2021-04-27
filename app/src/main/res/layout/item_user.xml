@@ -3,225 +3,239 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
-    android:layout_gravity="center"
+    android:layout_marginTop="5dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="130dp">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="125dp">
 
         <TextView
             android:id="@+id/tv_item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginEnd="16dp"
-            android:layout_toEndOf="@id/img_item_name"
-            android:fontFamily="@font/roboto_medium"
+            android:layout_marginBottom="5dp"
+            android:drawablePadding="4dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:textStyle="bold"
-            tools:text="Name" />
+            card_view:drawableStartCompat="@drawable/ic_baseline_person"
+            card_view:layout_constraintBottom_toTopOf="@+id/view"
+            card_view:layout_constraintEnd_toStartOf="@+id/view1"
+            card_view:layout_constraintHorizontal_bias="0.533"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent"
+            card_view:layout_constraintVertical_bias="0.0"
+            tools:text="AMILUSH" />
 
-        <ImageView
-            android:id="@+id/img_item_name"
-            android:layout_width="30dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="4dp"
-            android:src="@drawable/ic_baseline_person"
-            android:textStyle="bold"
-            tools:text="Name" />
-
-        <ImageView
-            android:id="@+id/img_this_month"
-            android:layout_width="30dp"
+        <TextView
+            android:id="@+id/tv_pr"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginRight ="16dp"
-            android:layout_marginBottom="2dp"
-            android:src="@drawable/ic_baseline_format_list_bulleted"
-            android:textStyle="bold"
-            android:layout_below="@id/img_item_name"  />
+            android:gravity="center"
+            android:text="@string/tv_pr"
+            android:textSize="20sp"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toStartOf="@+id/view2"
+            card_view:layout_constraintStart_toEndOf="@+id/view1"
+            card_view:layout_constraintTop_toTopOf="parent"
+            card_view:layout_constraintVertical_bias="0.0" />
+
+
+        <TextView
+            android:id="@+id/tv_po"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/tv_po"
+            android:textSize="20sp"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.492"
+            card_view:layout_constraintStart_toEndOf="@+id/view2"
+            card_view:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="2dp"
             android:background="@color/black"
-            android:layout_below="@id/img_this_month" />
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/tv_pr"
+            card_view:layout_constraintVertical_bias="0.0"
+            tools:layout_editor_absoluteX="0dp" />
 
         <View
             android:id="@+id/view1"
-            android:layout_width="3dp"
-            android:layout_height="85dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="8dp"
-            android:layout_toEndOf="@id/img_this_month"
-            android:layout_below="@id/img_item_name"
-            android:background="@color/black" />
+            android:layout_width="2dp"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.36"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent"
+            card_view:layout_constraintVertical_bias="0.457" />
 
-        <TextView
-            android:id="@+id/tv_pr"
-            android:layout_width="40dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:text="PR"
-            android:fontFamily="@font/roboto_medium"
-            android:textSize="25sp"
-            android:src="@drawable/ic_baseline_format_list_bulleted"
-            android:textStyle="bold"
-            android:layout_below="@id/img_this_month"/>
+        <View
+            android:id="@+id/view2"
+            android:layout_width="2dp"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.672"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent"
+            card_view:layout_constraintVertical_bias="0.0" />
 
-        <TextView
-            android:id="@+id/tv_po"
-            android:layout_width="42dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:text="PO"
-            android:textSize="25sp"
-            android:src="@drawable/ic_baseline_format_list_bulleted"
-            android:textStyle="bold"
-            android:layout_below="@id/tv_pr"/>
+        <View
+            android:id="@+id/view3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="2dp"
+            android:background="@color/black"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/tv_this_month"
+            card_view:layout_constraintVertical_bias="0.0"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="2dp"
+            android:background="@color/black"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/tv_last_month"
+            card_view:layout_constraintVertical_bias="0.0"
+            tools:layout_editor_absoluteX="0dp" />
 
         <TextView
             android:id="@+id/tv_this_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="normal"
+            android:gravity="center"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:text="@string/this_month"
-            android:fontFamily="@font/roboto_medium"
-            android:layout_marginStart="25dp"
-            android:layout_below="@id/tv_item_name"
-            android:layout_toEndOf="@id/img_this_month"
-            android:textColor="@color/black"
-            android:gravity="center"/>
+            android:textSize="20sp"
+            card_view:layout_constraintEnd_toStartOf="@+id/view1"
+            card_view:layout_constraintHorizontal_bias="0.532"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/view"
+            android:drawablePadding="2dp"/>
 
         <TextView
             android:id="@+id/pr_this_month"
-            android:layout_width="40dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="55dp"
-            android:layout_marginRight="16dp"
-            android:textSize="25sp"
-            android:fontFamily="@font/roboto_medium"
-            android:layout_below="@id/tv_this_month"
-            android:layout_toEndOf="@id/img_this_month"
-            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:textStyle="bold"
-            tools:text="15"/>
-        <View
-            android:id="@+id/view3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/black"
-            android:layout_below="@id/tv_pr" />
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            card_view:layout_constraintEnd_toStartOf="@+id/view2"
+            card_view:layout_constraintStart_toEndOf="@+id/view1"
+            card_view:layout_constraintTop_toBottomOf="@+id/view"
+            tools:text="11" />
 
         <TextView
             android:id="@+id/po_this_month"
-            android:layout_width="50dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginRight="16dp"
-            android:textSize="25sp"
-            android:fontFamily="@font/roboto_medium"
-            android:layout_below="@id/pr_this_month"
-            android:layout_toEndOf="@id/img_this_month"
-            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:textStyle="bold"
-            tools:text="5"/>
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.508"
+            card_view:layout_constraintStart_toEndOf="@+id/view2"
+            card_view:layout_constraintTop_toBottomOf="@+id/view"
+            tools:text="12" />
 
         <TextView
             android:id="@+id/tv_last_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="normal"
-            android:textColor="@color/black"
-            android:layout_marginStart="70dp"
+            android:gravity="center"
             android:text="@string/last_month"
-            android:fontFamily="@font/roboto_medium"
-            android:layout_below="@id/tv_item_name"
-            android:layout_toEndOf="@id/tv_this_month"
-            android:gravity="center"/>
+            android:textSize="20sp"
+            card_view:layout_constraintEnd_toStartOf="@+id/view1"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/view3" />
 
         <TextView
             android:id="@+id/pr_last_month"
-            android:layout_width="40dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="120dp"
-            android:textSize="25sp"
-            android:fontFamily="@font/roboto_medium"
-            android:layout_below="@id/tv_last_month"
-            android:layout_toEndOf="@id/tv_this_month"
-            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:textStyle="bold"
-            tools:text="11"/>
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            tools:layout_editor_absoluteX="157dp"
+            tools:layout_editor_absoluteY="66dp"
+            tools:text="22"
+            card_view:layout_constraintStart_toEndOf="@+id/view1"
+            card_view:layout_constraintTop_toBottomOf="@+id/view3"
+            card_view:layout_constraintEnd_toStartOf="@+id/view2"/>
 
         <TextView
             android:id="@+id/po_last_month"
-            android:layout_width="50dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="116dp"
-            android:textSize="25sp"
-            android:fontFamily="@font/roboto_medium"
-            android:layout_below="@id/pr_last_month"
-            android:layout_toEndOf="@id/tv_this_month"
-            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:textStyle="bold"
-            tools:text="10"/>
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toEndOf="@+id/view2"
+            card_view:layout_constraintTop_toBottomOf="@+id/view3"
+            tools:text="21" />
 
         <TextView
             android:id="@+id/tv_month_ago"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_below="@id/tv_item_name"
-            android:layout_toEndOf="@id/tv_last_month"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="3dp"
             android:gravity="center"
             android:text="@string/month_ago"
-            android:fontFamily="@font/roboto_medium"
-            android:textColor="@color/black"
             android:textSize="20sp"
-            android:textStyle="normal"/>
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toStartOf="@+id/view1"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/view4" />
 
         <TextView
             android:id="@+id/pr_month_ago"
-            android:layout_width="40dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="95dp"
-            android:textSize="25sp"
-            android:fontFamily="@font/roboto_medium"
-            android:layout_below="@id/tv_month_ago"
-            android:layout_toEndOf="@id/tv_last_month"
-            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="3dp"
             android:gravity="center"
-            android:textStyle="bold"
-            tools:text="1"/>
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toStartOf="@+id/view2"
+            card_view:layout_constraintStart_toEndOf="@+id/view1"
+            card_view:layout_constraintTop_toBottomOf="@+id/view4"
+            tools:text="12" />
+
         <TextView
             android:id="@+id/po_month_ago"
-            android:layout_width="65dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="90dp"
-            android:textSize="25sp"
-            android:fontFamily="@font/roboto_medium"
-            android:layout_below="@id/pr_month_ago"
-            android:layout_toEndOf="@id/tv_last_month"
-            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="3dp"
             android:gravity="center"
-            android:textStyle="bold"
-            tools:text="2"/>
-    </RelativeLayout>
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toEndOf="@+id/view2"
+            card_view:layout_constraintTop_toBottomOf="@+id/view4"
+            tools:text="21" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </androidx.cardview.widget.CardView>

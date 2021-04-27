@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PR-PO</string>
+    <string name="title_pr">Permintaan Pembelian</string>
+    <string name="title_po">Pesanan Pembelian</string>
+    <string name="name">Nama</string>
+    <string name="month_ago">≥ 3 Bulan</string>
+    <string name="last_month">Bulan Lalu</string>
+    <string name="this_month">Bulan Ini</string>
+    <string name="username">Nama Pengguna</string>
+    <string name="password">Kata Sandi</string>
+    <string name="sign_in">Masuk</string>
+    <string name="app_version">Versi Aplikasi</string>
+    <string name="logout">Keluar</string>
+    <string name="tv_pr">PR</string>
+    <string name="tv_po">PO</string>
+</resources>
