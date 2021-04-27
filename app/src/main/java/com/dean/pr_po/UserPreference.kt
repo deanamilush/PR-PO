@@ -33,10 +33,6 @@ internal class UserPreference(context: Context) {
 
     fun deleteUser(value: UserData) {
         val edit = preferences.edit()
-        /*edit.remove(value.username)
-        edit.remove(value.password)
-        edit.remove(USERNAME)
-        edit.remove(PASSWORD)*/
         edit.clear()
         edit.apply()
     }

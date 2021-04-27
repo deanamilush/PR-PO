@@ -1,5 +1,6 @@
 package com.dean.pr_po
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import org.json.JSONObject
 
+@Suppress("DEPRECATION")
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
@@ -22,13 +24,16 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     }
     private lateinit var loginBinding: ActivityLoginBinding
     private lateinit var mUserPreference: UserPreference
+    private lateinit var loadingDialog: ProgressDialog
     private var userData = UserData()
+    private lateinit var dialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loginBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(loginBinding.root)
 
+        loadingDialog = ProgressDialog(this)
         loginBinding.progressBar.visibility = View.INVISIBLE
 
         loginBinding.btnLogin.setOnClickListener(this)
@@ -48,7 +53,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun getUserLogin(){
-        loginBinding.progressBar.visibility = View.VISIBLE
         val loginUser = loginBinding.valueLogin.text.toString()
         val loginPass = loginBinding.valuePassword.text.toString()
         val client = AsyncHttpClient()
@@ -59,7 +63,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         val url = GlobalConfig.urlLogin
         client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
-                loginBinding.progressBar.visibility = View.INVISIBLE
+                dismissDialog()
                 val result = String (responseBody)
                 Log.d(TAG, result)
                 try {
@@ -71,15 +75,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         val typeErrorLogin = jsonObject.getString("type")
                         val messageErrorLogin = jsonObject.getString("msg")
                         if (typeErrorLogin.equals("E")){
-                            loginBinding.progressBar.visibility = View.INVISIBLE
-                            val builder = AlertDialog.Builder(this@LoginActivity)
+                            /*val builder = AlertDialog.Builder(this@LoginActivity)
                             builder.setTitle("Error")
                             builder.setMessage(messageErrorLogin)
                             builder.setCancelable(false)
                             builder.setPositiveButton("OK") { dialog, which ->
                                 dialog.cancel()
                             }
-                            builder.show()
+                            builder.show()*/
                         } else {
                             // get username and password from webservice
                             val responseLogin = resultMessage.getJSONObject(0)
@@ -92,9 +95,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             userData.pAshost = responseLogin.getString("ashost")
                             userData.pClient = responseLogin.getString("client")
                             userData.pPass_sap = responseLogin.getString("password")
-                            getLog()
+
+
                         }
                     }
+                    startLoadingDialog()
+                    getLog()
                 } catch (e: Exception) {
                     Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT)
                             .show()
@@ -103,7 +109,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray, error: Throwable) {
-                loginBinding.progressBar.visibility = View.INVISIBLE
+                dismissDialog()
                 val errorMessage = when (statusCode) {
                     401 -> "$statusCode : Bad Request"
                     403 -> "$statusCode : Forbidden"
@@ -111,10 +117,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     else -> "$statusCode : ${error.message}"
                 }
 
+                val mError = errorMessage.substring(0, 22)
                 val builder = AlertDialog.Builder(this@LoginActivity)
                 builder.setTitle("Error")
                 builder.setIcon(R.drawable.warning)
-                builder.setMessage(errorMessage)
+                builder.setMessage(mError)
                 builder.setCancelable(false)
                 builder.setPositiveButton(android.R.string.yes) { dialog, which ->
                     dialog.cancel()
@@ -125,8 +132,21 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
+    fun startLoadingDialog() {
+        val builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        builder.setView(inflater.inflate(R.layout.custom_dialog, null))
+        builder.setCancelable(false)
+        dialog = builder.create()
+        dialog.show()
+    }
+
+    fun dismissDialog() {
+        dialog.dismiss()
+        dialog.cancel()
+    }
+
     private fun getLog() {
-        loginBinding.progressBar.visibility = View.VISIBLE
         val loginUser = loginBinding.valueLogin.text.toString()
         val loginPass = loginBinding.valuePassword.text.toString()
         val client = AsyncHttpClient()
@@ -134,13 +154,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         params.put("id_user", userData.pId_user)
         params.put("id_app", GlobalConfig.pId_app)
         params.put("id_conn", userData.pId_conn)
-        val url = "http://36.91.208.115/GlobalInc/verifLog.php"
+        val url = GlobalConfig.urlVerifLog
         client.post(url, params, object : AsyncHttpResponseHandler() {
             override fun onSuccess(
                     statusCode: Int,
                     headers: Array<out Header>?,
                     responseBody: ByteArray
             ) {
+                dismissDialog()
                 val result = String(responseBody)
                 Log.d(SplashActivity.TAG, result)
                 try {
@@ -153,15 +174,19 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         val typeErrorLogin = jsonObject.getString("type")
                         val messageErrorLogin = jsonObject.getString("msg")
                         if (typeErrorLogin.equals("E")) {
+                            dismissDialog()
                             val builder = AlertDialog.Builder(this@LoginActivity)
                             builder.setTitle("Error")
+                            builder.setIcon(R.drawable.warning)
                             builder.setMessage(messageErrorLogin)
                             builder.setCancelable(false)
                             builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                                dismissDialog()
                                 dialog.cancel()
                             }
                             builder.show()
                         } else {
+
                             val responseLogin = resultMessage.getJSONObject(0)
                             userData.pPlant = responseLogin.getString("plant")
                             userData.username = responseLogin.getString("username")
@@ -179,13 +204,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                                 startActivity(gotomain)
 
                             } else {
-                                loginBinding.progressBar.visibility = View.INVISIBLE
                                 val builder = AlertDialog.Builder(this@LoginActivity)
                                 builder.setTitle("Error")
                                 builder.setIcon(R.drawable.warning)
                                 builder.setMessage("Username / Password Salah")
                                 builder.setCancelable(false)
                                 builder.setPositiveButton("Coba Lagi") { dialog, which ->
+                                    dismissDialog()
                                     dialog.cancel()
                                 }
                                 builder.show()
@@ -205,27 +230,41 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     responseBody: ByteArray?,
                     error: Throwable
             ) {
-                loginBinding.progressBar.visibility = View.INVISIBLE
+                dismissDialog()
                 val errorMessage = when (statusCode) {
                     401 -> "$statusCode : Bad Request"
                     403 -> "$statusCode : Forbidden"
                     404 -> "$statusCode : Not Found"
                     else -> "$statusCode : ${error.message}"
                 }
-                Toast.makeText(this@LoginActivity, errorMessage, Toast.LENGTH_SHORT).show()
+
+                val mError = errorMessage.substring(0, 22)
+                val builder = AlertDialog.Builder(this@LoginActivity)
+                builder.setTitle("Error")
+                builder.setIcon(R.drawable.warning)
+                builder.setMessage(mError)
+                builder.setCancelable(false)
+                builder.setPositiveButton("OK") { dialog, which ->
+                    dismissDialog()
+                    dialog.cancel()
+                }
+                builder.show()
             }
         })
     }
 
     override fun onClick(p0: View?) {
 
+        startLoadingDialog()
         val username = loginBinding.valueLogin.text.toString()
         val password = loginBinding.valuePassword.text.toString()
 
         if (username.isEmpty()){
+            dismissDialog()
             loginBinding.valueLogin.error = FIELD_REQUIRED
             return
         } else if (password.isEmpty()){
+            dismissDialog()
             loginBinding.valuePassword.error = FIELD_REQUIRED
             return
         } else{

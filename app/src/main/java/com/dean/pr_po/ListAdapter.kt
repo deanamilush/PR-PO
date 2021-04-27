@@ -6,21 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.dean.pr_po.databinding.ItemUserBinding
 
-class ListAdapter (private val listUser: ArrayList<UserData>):  RecyclerView.Adapter<ListAdapter.ListViewHolder>(){
-    lateinit var mcontext: Context
-    private val mData = ArrayList<UserData>()
-
-    private var onItemClickCallback: OnItemClickCallback? = null
-
-    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
-        this.onItemClickCallback = onItemClickCallback
-    }
-
-    fun setData(items: ArrayList<UserData>) {
-        mData.clear()
-        mData.addAll(items)
-        notifyDataSetChanged()
-    }
+class ListAdapter (private val listUser: ArrayList<UserData>):  RecyclerView.Adapter<ListAdapter.ListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val binding = ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -34,7 +20,8 @@ class ListAdapter (private val listUser: ArrayList<UserData>):  RecyclerView.Ada
 
     }
 
-    inner class ListViewHolder (private val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root){
+    inner class ListViewHolder(private val binding: ItemUserBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(user: UserData) {
             with(binding) {
                 tvItemName.text = user.name
@@ -44,13 +31,7 @@ class ListAdapter (private val listUser: ArrayList<UserData>):  RecyclerView.Ada
                 poThisMonth.text = user.poThisMonth.toString()
                 poLastMonth.text = user.poLastMonth.toString()
                 poMonthAgo.text = user.poMonthAgo.toString()
-
-                itemView.setOnClickListener { onItemClickCallback?.onItemClicked(user) }
             }
         }
-    }
-
-    interface OnItemClickCallback {
-        fun onItemClicked(data: UserData)
     }
 }

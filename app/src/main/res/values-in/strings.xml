@@ -14,4 +14,5 @@
     <string name="logout">Keluar</string>
     <string name="tv_pr">PR</string>
     <string name="tv_po">PO</string>
+    <string name="please_wait">Mohon Tunggu..</string>
 </resources>

@@ -1,7 +1,10 @@
 package com.dean.pr_po
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -11,19 +14,17 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dean.pr_po.databinding.ActivityMainBinding
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.AsyncHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import org.json.JSONObject
-import java.util.*
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val pDATA = "extra_data"
         private val TAG = MainActivity::class.java.simpleName
     }
 
@@ -32,8 +33,7 @@ class MainActivity : AppCompatActivity() {
     private val adapter = ListAdapter(list)
     private var userData = UserData()
     private lateinit var mUserPreference: UserPreference
-    private var jobId = 0
-    private var autoUpdate: Timer? = null
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,18 +41,130 @@ class MainActivity : AppCompatActivity() {
         setContentView(mainBinding.root)
 
         mUserPreference = UserPreference(this)
+        swipeRefreshLayout = findViewById(R.id.swipeContainer)
 
         mainBinding.recyclerView.setHasFixedSize(true)
         mainBinding.recyclerView.addItemDecoration(DividerItemDecoration(mainBinding.recyclerView.context, DividerItemDecoration.VERTICAL))
         mainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         mainBinding.recyclerView.adapter = adapter
 
+        swipeRefreshLayout.setOnRefreshListener(){
+            list.clear()
+            val dataPreference= mUserPreference.getUser()
+            val client = AsyncHttpClient()
+            val DEFAULT_TIMEOUT = 40 * 1000
+            client.setTimeout(DEFAULT_TIMEOUT)
+            val params = RequestParams()
+            params.put("ashost", dataPreference.pAshost)
+            params.put("sysnr", dataPreference.pSysnr)
+            params.put("client", dataPreference.pClient)
+            params.put("usap", dataPreference.pUser_sap)
+            params.put("psap", dataPreference.pPass_sap)
+            val url = GlobalConfig.urlValPrPo
+            client.post(url, params, object : AsyncHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
+                    val result = String(responseBody)
+                    Log.d(TAG, result)
+                    try {
+                        val responseObject = JSONObject(result)
+                        val returnMessage = responseObject.getJSONArray("return")
+                        val tPurc = responseObject.getJSONArray("t_purc")
+                        val tPr = responseObject.getJSONArray("t_pr")
+                        val tPo = responseObject.getJSONArray("t_po")
+                        for (i in 0 until returnMessage.length()) {
+                            val jsonObject = returnMessage.getJSONObject(i)
+                            val typeErrorLogin = jsonObject.getString("type")
+                            val messageErrorLogin = jsonObject.getString("msg")
+                            if (typeErrorLogin.equals("E")) {
+                                val builder = AlertDialog.Builder(this@MainActivity)
+                                builder.setTitle("Error")
+                                builder.setIcon(R.drawable.warning)
+                                builder.setMessage(messageErrorLogin)
+                                builder.setCancelable(false)
+                                builder.setPositiveButton("OK") { dialog, which ->
+                                    dialog.cancel()
+                                }
+                                builder.show()
+                            } else {
+                                for (l in 0 until tPurc.length()) {
+                                    val user = tPurc.getJSONObject(l)
+                                    val userData = UserData()
+                                    userData.name = user.getString("BEDNR")
+                                    val lBednr = user.getString("BEDNR")
+
+                                    for (j in 0 until tPr.length()) {
+                                        val dataPr = tPr.getJSONObject(j)
+                                        if (lBednr.equals(dataPr.getString("BEDNR"))) {
+                                            userData.prThisMonth = dataPr.getInt("QCUR_MT")
+                                            userData.prLastMonth = dataPr.getInt("QPREV_MT")
+                                            userData.prMonthAgo = dataPr.getInt("QLAST_MT")
+                                            break
+                                        }
+                                    }
+                                    for (k in 0 until tPo.length()) {
+                                        val dataPo = tPo.getJSONObject(k)
+                                        if (lBednr.equals(dataPo.getString("BEDNR"))) {
+                                            userData.poThisMonth = dataPo.getInt("QCUR_MT")
+                                            userData.poLastMonth = dataPo.getInt("QPREV_MT")
+                                            userData.poMonthAgo = dataPo.getInt("QLAST_MT")
+                                            break
+                                        }
+                                    }
+
+                                    list.add(userData)
+                                    adapter.notifyDataSetChanged()
+                                    Toast.makeText(this@MainActivity, "Data Berhasil di Update", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_SHORT)
+                            .show()
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray, error: Throwable) {
+                    val errorMessage = when (statusCode) {
+                        401 -> "$statusCode : Bad Request"
+                        403 -> "$statusCode : Forbidden"
+                        404 -> "$statusCode : Not Found"
+                        else -> "$statusCode : ${error.message}"
+                    }
+
+                    val mError = errorMessage.substring(0, 22)
+                    val builder = AlertDialog.Builder(this@MainActivity)
+                    builder.setTitle("Error")
+                    builder.setIcon(R.drawable.warning)
+                    builder.setMessage(mError)
+                    builder.setCancelable(false)
+                    builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                        dialog.cancel()
+                    }
+                    builder.show()
+                }
+
+            })
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                swipeRefreshLayout.isRefreshing = false
+            }, 4000)
+        }
+
+
         getListUser()
+
+        // Configure the refreshing colors
+        swipeRefreshLayout.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_red_light
+        )
     }
 
     private fun getListUser(){
-        list.clear()
-        mainBinding.progressBar.visibility = View.VISIBLE
+        showLoading(true)
         val dataPreference= mUserPreference.getUser()
         val client = AsyncHttpClient()
         val DEFAULT_TIMEOUT = 40 * 1000
@@ -63,10 +175,10 @@ class MainActivity : AppCompatActivity() {
         params.put("client", dataPreference.pClient)
         params.put("usap", dataPreference.pUser_sap)
         params.put("psap", dataPreference.pPass_sap)
-        val url = "http://36.91.208.115/GlobalInc/valPrPO.php"
+        val url = GlobalConfig.urlValPrPo
         client.post(url, params, object : AsyncHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
-                mainBinding.progressBar.visibility = View.INVISIBLE
+                showLoading(false)
                 val result = String(responseBody)
                 Log.d(TAG, result)
                 try {
@@ -80,9 +192,10 @@ class MainActivity : AppCompatActivity() {
                         val typeErrorLogin = jsonObject.getString("type")
                         val messageErrorLogin = jsonObject.getString("msg")
                         if (typeErrorLogin.equals("E")) {
-                            mainBinding.progressBar.visibility = View.INVISIBLE
+                            showLoading(false)
                             val builder = AlertDialog.Builder(this@MainActivity)
                             builder.setTitle("Error")
+                            builder.setIcon(R.drawable.warning)
                             builder.setMessage(messageErrorLogin)
                             builder.setCancelable(false)
                             builder.setPositiveButton("OK") { dialog, which ->
@@ -117,6 +230,7 @@ class MainActivity : AppCompatActivity() {
 
                                 list.add(userData)
                                 adapter.notifyDataSetChanged()
+
                             }
                         }
                     }
@@ -128,7 +242,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray, error: Throwable) {
-                mainBinding.progressBar.visibility = View.INVISIBLE
+                showLoading(false)
                 val errorMessage = when (statusCode) {
                     401 -> "$statusCode : Bad Request"
                     403 -> "$statusCode : Forbidden"
@@ -136,10 +250,11 @@ class MainActivity : AppCompatActivity() {
                     else -> "$statusCode : ${error.message}"
                 }
 
+                val mError = errorMessage.substring(0, 22)
                 val builder = AlertDialog.Builder(this@MainActivity)
                 builder.setTitle("Error")
                 builder.setIcon(R.drawable.warning)
-                builder.setMessage(errorMessage)
+                builder.setMessage(mError)
                 builder.setCancelable(false)
                 builder.setPositiveButton(android.R.string.yes) { dialog, which ->
                     dialog.cancel()
@@ -166,21 +281,6 @@ class MainActivity : AppCompatActivity() {
         builder.show()
 
     }
-/*
-    override fun onResume() {
-        super.onResume()
-        autoUpdate = Timer()
-        autoUpdate!!.schedule(object : TimerTask() {
-            override fun run() {
-                runOnUiThread {
-                    jobId++
-                    Toast.makeText(applicationContext, "Loading For Refresh Data ", Toast.LENGTH_SHORT).show()
-                    getListUser()
-                }
-            }
-        }, 0, 60000) // updates each 40 secs
-
-    }*/
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
