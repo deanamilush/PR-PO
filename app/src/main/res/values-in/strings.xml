@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PR-PO</string>
+    <string name="title_main">Laporan PR dan PO</string>
     <string name="title_pr">Permintaan Pembelian</string>
     <string name="title_po">Pesanan Pembelian</string>
     <string name="name">Nama</string>
@@ -15,4 +16,8 @@
     <string name="tv_pr">PR</string>
     <string name="tv_po">PO</string>
     <string name="please_wait">Mohon Tunggu..</string>
+    <string name="action_logout">Keluar</string>
+    <string name="id_user">ID User</string>
+    <string name="tv_host">Host</string>
+    <string name="tv_settings">Pengaturan</string>
 </resources>

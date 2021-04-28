@@ -92,15 +92,15 @@ class SplashActivity : AppCompatActivity() {
 
                 Toast.makeText(this@SplashActivity, errorMessage, Toast.LENGTH_SHORT)
                         .show()
-              /*//  val mError = errorMessage.substring(0, 22)
+                val mError = errorMessage.substring(0, 22)
                 val builder = AlertDialog.Builder(this@SplashActivity)
                 builder.setTitle("Error")
-                builder.setMessage(errorMessage)
+                builder.setMessage(mError)
                 builder.setCancelable(false)
                 builder.setPositiveButton("OK") { dialog, which ->
                     dialog.cancel()
                 }
-                builder.show()*/
+                builder.show()
             }
         })
     }

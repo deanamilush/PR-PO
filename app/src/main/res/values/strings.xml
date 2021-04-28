@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PR-PO</string>
+    <string name="title_main">Report PR dan PO</string>
     <string name="title_pr">Purchase Requisition</string>
     <string name="title_po">Purchase Order</string>
     <string name="name">Name</string>
@@ -14,4 +15,8 @@
     <string name="tv_pr">PR</string>
     <string name="tv_po">PO</string>
     <string name="please_wait">Please Wait..</string>
+    <string name="action_logout">Logout</string>
+    <string name="id_user">ID User</string>
+    <string name="tv_host">Host</string>
+    <string name="tv_settings">Settings</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.dean.pr_po
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dean.pr_po.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.AsyncHttpResponseHandler
 import com.loopj.android.http.RequestParams
@@ -44,7 +44,12 @@ class MainActivity : AppCompatActivity() {
         swipeRefreshLayout = findViewById(R.id.swipeContainer)
 
         mainBinding.recyclerView.setHasFixedSize(true)
-        mainBinding.recyclerView.addItemDecoration(DividerItemDecoration(mainBinding.recyclerView.context, DividerItemDecoration.VERTICAL))
+        mainBinding.recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                mainBinding.recyclerView.context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
         mainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         mainBinding.recyclerView.adapter = adapter
 
@@ -62,7 +67,11 @@ class MainActivity : AppCompatActivity() {
             params.put("psap", dataPreference.pPass_sap)
             val url = GlobalConfig.urlValPrPo
             client.post(url, params, object : AsyncHttpResponseHandler() {
-                override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
+                override fun onSuccess(
+                    statusCode: Int,
+                    headers: Array<Header>,
+                    responseBody: ByteArray
+                ) {
                     val result = String(responseBody)
                     Log.d(TAG, result)
                     try {
@@ -113,8 +122,7 @@ class MainActivity : AppCompatActivity() {
 
                                     list.add(userData)
                                     adapter.notifyDataSetChanged()
-                                    Toast.makeText(this@MainActivity, "Data Berhasil di Update", Toast.LENGTH_SHORT)
-                                        .show()
+                                    showSnackbarMessage("Data Berhasil di Update")
                                 }
                             }
                         }
@@ -125,7 +133,12 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray, error: Throwable) {
+                override fun onFailure(
+                    statusCode: Int,
+                    headers: Array<out Header>?,
+                    responseBody: ByteArray,
+                    error: Throwable
+                ) {
                     val errorMessage = when (statusCode) {
                         401 -> "$statusCode : Bad Request"
                         403 -> "$statusCode : Forbidden"
@@ -149,7 +162,7 @@ class MainActivity : AppCompatActivity() {
 
             Handler(Looper.getMainLooper()).postDelayed({
                 swipeRefreshLayout.isRefreshing = false
-            }, 4000)
+            }, 6000)
         }
 
 
@@ -177,7 +190,11 @@ class MainActivity : AppCompatActivity() {
         params.put("psap", dataPreference.pPass_sap)
         val url = GlobalConfig.urlValPrPo
         client.post(url, params, object : AsyncHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
+            override fun onSuccess(
+                statusCode: Int,
+                headers: Array<Header>,
+                responseBody: ByteArray
+            ) {
                 showLoading(false)
                 val result = String(responseBody)
                 Log.d(TAG, result)
@@ -236,12 +253,17 @@ class MainActivity : AppCompatActivity() {
                     }
                 } catch (e: Exception) {
                     Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_SHORT)
-                            .show()
+                        .show()
                     e.printStackTrace()
                 }
             }
 
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray, error: Throwable) {
+            override fun onFailure(
+                statusCode: Int,
+                headers: Array<out Header>?,
+                responseBody: ByteArray,
+                error: Throwable
+            ) {
                 showLoading(false)
                 val errorMessage = when (statusCode) {
                     401 -> "$statusCode : Bad Request"
@@ -265,31 +287,15 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun actionLogout() {
-        val builder = AlertDialog.Builder(this@MainActivity)
-        builder.setTitle("Informasi")
-        builder.setIcon(R.drawable.warning)
-        builder.setMessage("Anda Yakin ingin Logout")
-        builder.setCancelable(false)
-        builder.setPositiveButton("Ya") { dialog, which ->
-            mUserPreference.deleteUser(userData)
-            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-        }
-        builder.setNegativeButton("No") { dialog, which ->
-            dialog.cancel()
-        }
-        builder.show()
-
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_logout) {
-            actionLogout()
+        if (item.itemId == R.id.action_settings) {
+            val gotoSplash = Intent(this@MainActivity, SettingsActivity::class.java)
+            startActivity(gotoSplash)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -309,5 +315,9 @@ class MainActivity : AppCompatActivity() {
         toExit.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(toExit)
         finish()
+    }
+
+    private fun showSnackbarMessage(message: String) {
+        Snackbar.make(mainBinding.recyclerView, message, Snackbar.LENGTH_SHORT).show()
     }
 }

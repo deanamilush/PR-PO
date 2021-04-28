@@ -13,25 +13,26 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PRPO"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".SplashActivity"
-            android:theme="@style/NoActionBar">
-
+        <activity android:name=".SettingsActivity"
+            android:label="@string/tv_settings"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity"
-            android:theme="@style/NoActionBar"/>
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" />
-
-        <!--<service android:name=".GetCurrentData"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>-->
+            android:label="@string/title_main" />
     </application>
 
 </manifest>

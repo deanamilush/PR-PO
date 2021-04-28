@@ -34,7 +34,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(loginBinding.root)
 
         loadingDialog = ProgressDialog(this)
-        loginBinding.progressBar.visibility = View.INVISIBLE
 
         loginBinding.btnLogin.setOnClickListener(this)
 
@@ -198,7 +197,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             userData.pClient = responseLogin.getString("client")
 
                             if (userData.username.equals(loginUser) && userData.password.equals(loginPass)){
-                                loginBinding.progressBar.visibility = View.INVISIBLE
                                 saveUser(loginUser, loginPass, userData.pUser_sap, userData.pPass_sap, userData.pAshost, userData.pSysnr, userData.pClient, userData.pId_user)
                                 val gotomain = Intent(this@LoginActivity, MainActivity::class.java)
                                 startActivity(gotomain)
