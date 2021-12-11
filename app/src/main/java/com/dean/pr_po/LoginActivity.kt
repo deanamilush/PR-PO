@@ -51,6 +51,38 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    override fun onClick(p0: View?) {
+
+        startLoadingDialog()
+        val username = loginBinding.valueLogin.text.toString()
+        val password = loginBinding.valuePassword.text.toString()
+
+        if (username.isEmpty()){
+            dismissDialog()
+            loginBinding.valueLogin.error = FIELD_REQUIRED
+            return
+        } else if (password.isEmpty()){
+            dismissDialog()
+            loginBinding.valuePassword.error = FIELD_REQUIRED
+            return
+        } else{
+            getUserLogin()
+        }
+    }
+
+    private fun saveUser(username: String, password: String, userSap: String, passSap: String, ashost: String, sysnr: String, client: String, idUser: String) {
+        val userPreference = UserPreference(this)
+        userData.username = username
+        userData.password = password
+        userData.pUser_sap = userSap
+        userData.pPass_sap = passSap
+        userData.pAshost = ashost
+        userData.pSysnr = sysnr
+        userData.pClient = client
+        userData.pId_user = idUser
+        userPreference.setUser(userData)
+    }
+
     private fun getUserLogin(){
         val loginUser = loginBinding.valueLogin.text.toString()
         val loginPass = loginBinding.valuePassword.text.toString()
@@ -59,7 +91,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         params.put("id_app", GlobalConfig.pId_app)
         params.put("username", loginUser)
         params.put("password", loginPass)
-        val url = GlobalConfig.urlLogin
+        val url = "http://192.168.1.184:81/prpo/api/log/logserv"
         client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
                 dismissDialog()
@@ -73,17 +105,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         val jsonObject = returnMessage.getJSONObject(i)
                         val typeErrorLogin = jsonObject.getString("type")
                         val messageErrorLogin = jsonObject.getString("msg")
-                        if (typeErrorLogin.equals("E")){
-                            /*val builder = AlertDialog.Builder(this@LoginActivity)
-                            builder.setTitle("Error")
-                            builder.setMessage(messageErrorLogin)
-                            builder.setCancelable(false)
-                            builder.setPositiveButton("OK") { dialog, which ->
-                                dialog.cancel()
-                            }
-                            builder.show()*/
-                        } else {
-                            // get username and password from webservice
+                        if (typeErrorLogin.equals("S")){
                             val responseLogin = resultMessage.getJSONObject(0)
                             userData.pId_user = responseLogin.getString("id_user")
                             userData.username = responseLogin.getString("username")
@@ -95,14 +117,23 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             userData.pClient = responseLogin.getString("client")
                             userData.pPass_sap = responseLogin.getString("password")
 
-
+                            startLoadingDialog()
+                            getLog()
+                        } else {
+                            val builder = AlertDialog.Builder(this@LoginActivity)
+                            builder.setTitle("Error")
+                            builder.setMessage(messageErrorLogin)
+                            builder.setCancelable(false)
+                            builder.setPositiveButton("OK") { dialog, which ->
+                                dialog.cancel()
+                            }
+                            builder.show()
                         }
                     }
-                    startLoadingDialog()
-                    getLog()
+
                 } catch (e: Exception) {
-                    Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT)
-                            .show()
+                   /* Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT)
+                            .show()*/
                     e.printStackTrace()
                 }
             }
@@ -153,7 +184,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         params.put("id_user", userData.pId_user)
         params.put("id_app", GlobalConfig.pId_app)
         params.put("id_conn", userData.pId_conn)
-        val url = GlobalConfig.urlVerifLog
+        val url = "http://192.168.1.184:81/prpo/api/log/veriflog"
         client.post(url, params, object : AsyncHttpResponseHandler() {
             override fun onSuccess(
                     statusCode: Int,
@@ -196,10 +227,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             userData.pSysnr = responseLogin.getString("sysnr")
                             userData.pClient = responseLogin.getString("client")
 
-                            if (userData.username.equals(loginUser) && userData.password.equals(loginPass)){
-                                saveUser(loginUser, loginPass, userData.pUser_sap, userData.pPass_sap, userData.pAshost, userData.pSysnr, userData.pClient, userData.pId_user)
-                                val gotomain = Intent(this@LoginActivity, MainActivity::class.java)
-                                startActivity(gotomain)
+                            saveUser(loginUser, loginPass, userData.pUser_sap, userData.pPass_sap, userData.pAshost, userData.pSysnr, userData.pClient, userData.pId_user)
+                            val gotomain = Intent(this@LoginActivity, MainActivity::class.java)
+                            startActivity(gotomain)
+
+                            /*if (userData.username.equals(loginUser) && userData.password.equals(loginPass)){
 
                             } else {
                                 val builder = AlertDialog.Builder(this@LoginActivity)
@@ -212,7 +244,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                                     dialog.cancel()
                                 }
                                 builder.show()
-                            }
+                            }*/
                         }
                     }
                 } catch (e: Exception) {
@@ -249,38 +281,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 builder.show()
             }
         })
-    }
-
-    override fun onClick(p0: View?) {
-
-        startLoadingDialog()
-        val username = loginBinding.valueLogin.text.toString()
-        val password = loginBinding.valuePassword.text.toString()
-
-        if (username.isEmpty()){
-            dismissDialog()
-            loginBinding.valueLogin.error = FIELD_REQUIRED
-            return
-        } else if (password.isEmpty()){
-            dismissDialog()
-            loginBinding.valuePassword.error = FIELD_REQUIRED
-            return
-        } else{
-            getUserLogin()
-        }
-    }
-
-    private fun saveUser(username: String, password: String, userSap: String, passSap: String, ashost: String, sysnr: String, client: String, idUser: String) {
-        val userPreference = UserPreference(this)
-        userData.username = username
-        userData.password = password
-        userData.pUser_sap = userSap
-        userData.pPass_sap = passSap
-        userData.pAshost = ashost
-        userData.pSysnr = sysnr
-        userData.pClient = client
-        userData.pId_user = idUser
-        userPreference.setUser(userData)
     }
 
     override fun onBackPressed() {

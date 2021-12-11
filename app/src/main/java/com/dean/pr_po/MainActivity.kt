@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
             params.put("client", dataPreference.pClient)
             params.put("usap", dataPreference.pUser_sap)
             params.put("psap", dataPreference.pPass_sap)
-            val url = GlobalConfig.urlValPrPo
+            val url = "http://192.168.1.184:81/prpo/api/rpt/valprpo"
             client.post(url, params, object : AsyncHttpResponseHandler() {
                 override fun onSuccess(
                     statusCode: Int,
@@ -188,7 +188,7 @@ class MainActivity : AppCompatActivity() {
         params.put("client", dataPreference.pClient)
         params.put("usap", dataPreference.pUser_sap)
         params.put("psap", dataPreference.pPass_sap)
-        val url = GlobalConfig.urlValPrPo
+        val url = "http://192.168.1.184:81/prpo/api/rpt/valprpo"
         client.post(url, params, object : AsyncHttpResponseHandler() {
             override fun onSuccess(
                 statusCode: Int,

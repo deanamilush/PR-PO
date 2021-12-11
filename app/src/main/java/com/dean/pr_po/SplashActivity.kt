@@ -1,6 +1,8 @@
 package com.dean.pr_po
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -42,7 +44,7 @@ class SplashActivity : AppCompatActivity() {
         val client = AsyncHttpClient()
         val params = RequestParams()
         params.put("id_app", GlobalConfig.pId_app)
-        val url = GlobalConfig.urlVersion
+        val url = "http://192.168.1.184:81/prpo/api/log/verserv"
         client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray?) {
                 splashBinding.progressBar.visibility = View.INVISIBLE
@@ -70,8 +72,36 @@ class SplashActivity : AppCompatActivity() {
                             val responseLogin = resultMessage.getJSONObject(0)
                             dataUser.version = responseLogin.getString("version")
                             dataUser.dev = responseLogin.getString("dev")
-                            splashBinding.tvVersion.text = verApp
-                            startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                            val dbvers = dataUser.version.toString() + "." + dataUser.dev
+
+                            if (verApp.equals(dbvers)){
+                                splashBinding.tvVersion.text = verApp
+                                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                            } else{
+                                val builder = AlertDialog.Builder(this@SplashActivity)
+                                builder.setTitle("Error")
+                                builder.setMessage("Harap Perbaharui Versi Aplikasi")
+                                builder.setCancelable(false)
+                                builder.setPositiveButton("Update") { dialog, which ->
+                                    try {
+                                        startActivity(
+                                            Intent(
+                                                Intent.ACTION_VIEW,
+                                                Uri.parse("market://details?id=" + this@SplashActivity.packageName)
+                                            )
+                                        )
+                                    } catch (e: ActivityNotFoundException) {
+                                        startActivity(
+                                            Intent(
+                                                Intent.ACTION_VIEW,
+                                                Uri.parse("http://play.google.com/store/apps/details?id=" + this@SplashActivity.packageName)
+                                            )
+                                        )
+                                    }
+                                    finish()
+                                }
+                                builder.show()
+                            }
                         }
                     }
                 } catch (e: Exception) {
