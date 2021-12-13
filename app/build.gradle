@@ -32,7 +32,7 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures{
-        viewBinding = true
+        viewBinding true
     }
 }
 
@@ -56,4 +56,12 @@ dependencies {
 
     implementation 'com.loopj.android:android-async-http:1.4.11'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation 'com.synnapps:carouselview:0.1.4'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+}
+
+repositories {
+    maven {
+        url 'https://jitpack.io'
+    }
 }

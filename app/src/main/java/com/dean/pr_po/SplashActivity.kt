@@ -44,7 +44,7 @@ class SplashActivity : AppCompatActivity() {
         val client = AsyncHttpClient()
         val params = RequestParams()
         params.put("id_app", GlobalConfig.pId_app)
-        val url = "http://192.168.1.184:81/prpo/api/log/verserv"
+        val url = "http://dev.gsg.co.id/prpo/api/log/verserv"
         client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray?) {
                 splashBinding.progressBar.visibility = View.INVISIBLE

@@ -91,7 +91,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         params.put("id_app", GlobalConfig.pId_app)
         params.put("username", loginUser)
         params.put("password", loginPass)
-        val url = "http://192.168.1.184:81/prpo/api/log/logserv"
+        val url = "http://dev.gsg.co.id/prpo/api/log/logserv"
         client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
                 dismissDialog()
@@ -184,7 +184,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         params.put("id_user", userData.pId_user)
         params.put("id_app", GlobalConfig.pId_app)
         params.put("id_conn", userData.pId_conn)
-        val url = "http://192.168.1.184:81/prpo/api/log/veriflog"
+        val url = "http://dev.gsg.co.id/prpo/api/log/veriflog"
         client.post(url, params, object : AsyncHttpResponseHandler() {
             override fun onSuccess(
                     statusCode: Int,
