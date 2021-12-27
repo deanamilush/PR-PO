@@ -19,10 +19,6 @@
     <string name="id_user">ID User</string>
     <string name="tv_host">Host</string>
     <string name="tv_settings">Settings</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="tab_text_1">PR</string>
-    <string name="tab_text_2">PO</string>
-    <string name="content_tab_home">Welcome Home</string>
-    <string name="content_tab_profile">Change your Profile here</string>
+    <string name="tv_detail">Detail Data</string>
+    <string name="tv_all">All Data</string>
 </resources>

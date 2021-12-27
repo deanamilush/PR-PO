@@ -15,7 +15,6 @@ import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import org.json.JSONObject
 
-@Suppress("DEPRECATION")
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
@@ -91,7 +90,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         params.put("id_app", GlobalConfig.pId_app)
         params.put("username", loginUser)
         params.put("password", loginPass)
-        val url = "http://dev.gsg.co.id/prpo/api/log/logserv"
+        val url = "http://developer.gsg.co.id/prpo/api/log/logserv"
         client.post(url, params, object: AsyncHttpResponseHandler(){
             override fun onSuccess(statusCode: Int, headers: Array<Header>, responseBody: ByteArray) {
                 dismissDialog()
@@ -184,7 +183,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         params.put("id_user", userData.pId_user)
         params.put("id_app", GlobalConfig.pId_app)
         params.put("id_conn", userData.pId_conn)
-        val url = "http://dev.gsg.co.id/prpo/api/log/veriflog"
+        val url = "http://developer.gsg.co.id/prpo/api/log/veriflog"
         client.post(url, params, object : AsyncHttpResponseHandler() {
             override fun onSuccess(
                     statusCode: Int,
@@ -230,21 +229,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             saveUser(loginUser, loginPass, userData.pUser_sap, userData.pPass_sap, userData.pAshost, userData.pSysnr, userData.pClient, userData.pId_user)
                             val gotomain = Intent(this@LoginActivity, MainActivity::class.java)
                             startActivity(gotomain)
-
-                            /*if (userData.username.equals(loginUser) && userData.password.equals(loginPass)){
-
-                            } else {
-                                val builder = AlertDialog.Builder(this@LoginActivity)
-                                builder.setTitle("Error")
-                                builder.setIcon(R.drawable.warning)
-                                builder.setMessage("Username / Password Salah")
-                                builder.setCancelable(false)
-                                builder.setPositiveButton("Coba Lagi") { dialog, which ->
-                                    dismissDialog()
-                                    dialog.cancel()
-                                }
-                                builder.show()
-                            }*/
                         }
                     }
                 } catch (e: Exception) {

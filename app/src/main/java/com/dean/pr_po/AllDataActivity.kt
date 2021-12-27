@@ -66,7 +66,8 @@ class AllDataActivity : AppCompatActivity() {
             params.put("client", dataPreference.pClient)
             params.put("usap", dataPreference.pUser_sap)
             params.put("psap", dataPreference.pPass_sap)
-            val url = "http://dev.gsg.co.id/prpo/api/rpt/valprpo"
+            params.put("id_user", dataPreference.pId_user)
+            val url = "http://developer.gsg.co.id/prpo/api/rpt/valprpo"
             client.post(url, params, object : AsyncHttpResponseHandler() {
                 override fun onSuccess(
                     statusCode: Int,
@@ -189,7 +190,8 @@ class AllDataActivity : AppCompatActivity() {
         params.put("client", dataPreference.pClient)
         params.put("usap", dataPreference.pUser_sap)
         params.put("psap", dataPreference.pPass_sap)
-        val url = "http://dev.gsg.co.id/prpo/api/rpt/valprpo"
+        params.put("id_user", dataPreference.pId_user)
+        val url = "http://developer.gsg.co.id/prpo/api/rpt/valprpo"
         client.post(url, params, object : AsyncHttpResponseHandler() {
             override fun onSuccess(
                 statusCode: Int,

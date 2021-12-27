@@ -20,4 +20,6 @@
     <string name="id_user">ID User</string>
     <string name="tv_host">Host</string>
     <string name="tv_settings">Pengaturan</string>
+    <string name="tv_detail">Rincian Data</string>
+    <string name="tv_all">Semua Data</string>
 </resources>

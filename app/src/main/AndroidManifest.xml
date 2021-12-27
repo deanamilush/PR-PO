@@ -13,10 +13,14 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".DetailActivity"
+            android:parentActivityName=".UserDataActivity"
+            android:label="@string/tv_detail"
             android:exported="true" />
         <activity
             android:name=".AllDataActivity"
             android:exported="true"
+            android:label="@string/tv_all"
+            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".UserDataActivity"

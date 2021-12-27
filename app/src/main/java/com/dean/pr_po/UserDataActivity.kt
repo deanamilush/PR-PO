@@ -30,7 +30,6 @@ class UserDataActivity : AppCompatActivity() {
 
     private lateinit var userDataBinding: ActivityUserDataBinding
     private val list = ArrayList<UserData>()
-    // private val adapter = ListAdapter(list)
     private val nameAdapter = NameAdapter(list)
     private var userData = UserData()
     private lateinit var mUserPreference: UserPreference
@@ -72,7 +71,8 @@ class UserDataActivity : AppCompatActivity() {
             params.put("client", dataPreference.pClient)
             params.put("usap", dataPreference.pUser_sap)
             params.put("psap", dataPreference.pPass_sap)
-            val url = "http://dev.gsg.co.id/prpo/api/rpt/valprpo"
+            params.put("id_user", dataPreference.pId_user)
+            val url = "http://developer.gsg.co.id/prpo/api/rpt/valprpo"
             client.post(url, params, object : AsyncHttpResponseHandler() {
                 override fun onSuccess(
                     statusCode: Int,
@@ -201,7 +201,8 @@ class UserDataActivity : AppCompatActivity() {
         params.put("client", dataPreference.pClient)
         params.put("usap", dataPreference.pUser_sap)
         params.put("psap", dataPreference.pPass_sap)
-        val url = "http://dev.gsg.co.id/prpo/api/rpt/valprpo"
+        params.put("id_user", dataPreference.pId_user)
+        val url = "http://developer.gsg.co.id/prpo/api/rpt/valprpo"
         client.post(url, params, object : AsyncHttpResponseHandler() {
             override fun onSuccess(
                 statusCode: Int,
